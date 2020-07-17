@@ -1,0 +1,56 @@
+﻿<Window x:Class="TextAnalyzer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TextAnalyzer"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" >
+    <Window.Background>
+        <RadialGradientBrush>
+            <RadialGradientBrush.GradientStops>
+                <GradientStop Color="White" Offset="-0.3" />
+                <GradientStop Color="LightBlue" Offset="1" />
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+    </Window.Background>
+    <Window.Resources>
+        <Style x:Key="WebBrowserStyle">
+            <Setter Property="Control.BorderThickness" Value="10"/>
+            <Setter Property="Control.BorderBrush" Value="BlueViolet"/>
+        </Style>
+        <Style x:Key="MainFontSettings">
+            <Setter Property="Control.FontFamily" Value="Arial"/>
+            <Setter Property="Control.FontSize" Value="15"/>
+        </Style>
+    </Window.Resources>
+    <Grid Style="{StaticResource MainFontSettings}">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <WebBrowser DataContext="{Binding Path=_textModel.Text}" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="10" x:Name="MainWebBrowser"/>
+        <GroupBox Grid.Row="2" Grid.Column="0" Margin="10" Header="Mean">
+            <ListView x:Name="ColorListView">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="10" Height="10" Fill="{Binding Path=Name}"/>
+                            <TextBlock Text="{Binding StringFormat= - {0}, Path=Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </GroupBox>
+        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" Margin="10">
+            <Button Height="auto" Margin="5" Click="Button_Click_1">Analyze</Button>
+            <Button Height="auto" Margin="5" Click="Button_Click">Load File</Button>
+            <Button Height="auto" Margin="5">Save File</Button>
+        </StackPanel>
+    </Grid>
+</Window>
