@@ -70,8 +70,6 @@ namespace TextAnalyzer
             return result;
         }
 
-
-
         public string FilePath
         {
             get { return filePath; }
