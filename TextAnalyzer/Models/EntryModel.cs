@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace TextAnalyzer.Models
 {
@@ -19,10 +19,10 @@ namespace TextAnalyzer.Models
     {
         private static Color [] textColors = new Color[]
         {
-            Colors.Gold,
-            Colors.Orange,
-            Colors.Aquamarine,
-            Colors.Aqua
+            Color.Gold,
+            Color.Orange,
+            Color.Aquamarine,
+            Color.Aqua
         };
             
         public static Color GetColorByCode(EntryCodes code) 
@@ -38,8 +38,25 @@ namespace TextAnalyzer.Models
     }
     public class EntryModel
     {
-        public int StartIndex { get; set; }
-        public int EndIndex { get; set; }
+        public static int Offset { get; set; }
+        public int startIndex;
+        public int endIndex;
         public Color textColor { get; set; }
+
+
+        public int StartIndex
+        {
+            get { return startIndex + Offset; }
+            set { startIndex = value; }
+        }
+        public int EndIndex
+        {
+            get { return endIndex + Offset; }
+            set { endIndex = value; }
+        }
+        public int Length
+        {
+            get { return EndIndex - StartIndex; }
+        }
     }
 }

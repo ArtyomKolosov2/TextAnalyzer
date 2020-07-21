@@ -60,8 +60,10 @@ namespace TextAnalyzer
         private bool OpenFile() 
         {
             bool result = false;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Text Files (*.txt)|*.txt|HTML Files (*.html,*.htm)|*.html*.htm| All files (*.*)|*.*";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Text Files (*.txt)|*.txt|HTML Files (*.html,*.htm)|*.html*.htm| All files (*.*)|*.*"
+            };
             if (openFileDialog.ShowDialog() == true)
             {
                 FilePath = openFileDialog.FileName;
@@ -81,7 +83,14 @@ namespace TextAnalyzer
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            _textModel.StartWork();
+            if (!_textModel.IsAnalyzed)
+            {
+                _textModel.StartWork();
+            }
+            else
+            {
+                MessageBox.Show("Text Already Analyzed!");
+            }
         }
     }
 }

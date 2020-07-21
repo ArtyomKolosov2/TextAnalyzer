@@ -16,9 +16,8 @@ namespace TextAnalyzer.Models
                 byte[] bytes = new byte[fs.Length];
                 fs.Read(bytes, 0, bytes.Length);
                 string myText = Encoding.Default.GetString(bytes);
-                textModel.Text = myText;
+                textModel.SetNewText(myText);
             }
-            
         }
     }
 }
