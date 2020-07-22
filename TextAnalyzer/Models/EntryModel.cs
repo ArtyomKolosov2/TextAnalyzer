@@ -39,10 +39,9 @@ namespace TextAnalyzer.Models
     public class EntryModel
     {
         public static int Offset { get; set; }
-        public int startIndex;
-        public int endIndex;
+        private int startIndex;
+        private int endIndex;
         public Color textColor { get; set; }
-
 
         public int StartIndex
         {

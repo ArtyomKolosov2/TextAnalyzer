@@ -19,5 +19,9 @@ namespace TextAnalyzer.Models
                 textModel.SetNewText(myText);
             }
         }
+        public void SaveFile(TextModel textModel)
+        {
+            ;
+        }
     }
 }

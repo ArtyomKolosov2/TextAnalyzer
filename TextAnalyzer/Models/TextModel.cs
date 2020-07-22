@@ -121,7 +121,7 @@ namespace TextAnalyzer.Models
                     endString = $"</span>";
                 _text.Insert(entry.StartIndex, startString);
                 _text.Insert(entry.EndIndex+startString.Length, endString);
-                EntryModel.Offset = startString.Length + endString.Length;
+                EntryModel.Offset += startString.Length + endString.Length;
             }
             OnChanged();
         }
