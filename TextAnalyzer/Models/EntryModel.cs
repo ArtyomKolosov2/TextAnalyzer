@@ -66,4 +66,9 @@ namespace TextAnalyzer.Models
             get { return EndIndex - StartIndex; }
         }
     }
+
+    public class EntryModelNum : EntryModel
+    {
+        public int Num { get; set; }
+    }
 }
