@@ -50,6 +50,11 @@ namespace TextAnalyzer.Models
                 {
                     string word = new string(array);
                     FindLongestWord(word, i);
+                    Test(word, i, new char[] { 'а', 'ы', 'у', 'е', 'о', 'э', 'я', 'и', 'ю', 'ё' }, EntryCodes.OnlyVowel);
+                    Test(word, i, new char[] { 'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ' }, EntryCodes.OnlyConsonat);
+                    /*Task task1 = Task.Run(() => FindLongestWord(word, i));
+                    Task task2 = Task.Run(() => Test(word, i));
+                    await Task.WhenAll(new [] { task1, task2 });*/
                     array = new char[100];
                     flag = true;
                     index = 0;                
@@ -72,7 +77,31 @@ namespace TextAnalyzer.Models
             return result;
         }
 
-        private void FindLongestWord(string word, int startIndex)
+        private void Test(string word, int endIndex, char[] symbols, EntryCodes codes)
+        {
+            //char[] symbols = new char[] { 'a', 'i', 'e', 'o', 'u', 'y' };
+            int trueLength = FindTrueLength(word);
+            bool result = true;
+            for (int i = 0; i < trueLength; i++)
+            {
+                if (!symbols.Contains(char.ToLower(word[i])))
+                {
+                    result = false;
+                    break;
+                }
+            }
+            if (result)
+            {
+                EntryModels.Add(new EntryModel
+                {
+                    StartIndex = endIndex - trueLength,
+                    EndIndex = endIndex,
+                    textColor = GetColor.GetColorByCode(codes)
+                });
+            }
+        }
+ 
+        private void FindLongestWord(string word, int endIndex)
         {
             int trueLength = FindTrueLength(word);
             if (LongestWords.Count != 0)
@@ -84,8 +113,8 @@ namespace TextAnalyzer.Models
                         LongestWords.Clear();
                         LongestWords.Add(new EntryModel
                         {
-                            StartIndex = startIndex - trueLength,
-                            EndIndex = startIndex,
+                            StartIndex = endIndex - trueLength,
+                            EndIndex = endIndex,
                             textColor = GetColor.GetColorByCode(EntryCodes.LongestWord)
                         });
                         break;
@@ -94,8 +123,8 @@ namespace TextAnalyzer.Models
                     {
                         LongestWords.Add(new EntryModel
                         {
-                            StartIndex = startIndex - trueLength,
-                            EndIndex = startIndex ,
+                            StartIndex = endIndex - trueLength,
+                            EndIndex = endIndex ,
                             textColor = GetColor.GetColorByCode(EntryCodes.LongestWord)
                         });
                         break;
@@ -106,8 +135,8 @@ namespace TextAnalyzer.Models
             {
                 LongestWords.Add(new EntryModel
                 {
-                    StartIndex = startIndex - trueLength,
-                    EndIndex = startIndex,
+                    StartIndex = endIndex - trueLength,
+                    EndIndex = endIndex,
                     textColor = GetColor.GetColorByCode(EntryCodes.LongestWord)
                 });
             }
@@ -115,6 +144,7 @@ namespace TextAnalyzer.Models
 
         private void ColorizeEntries()
         {
+            EntryModels.Sort(new SortByStartIndex());
             foreach (var entry in EntryModels)
             {
                 string startString = $"<span style=\"background:{ColorTranslator.ToHtml(entry.textColor)}\">",

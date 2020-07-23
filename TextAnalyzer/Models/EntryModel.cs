@@ -36,6 +36,14 @@ namespace TextAnalyzer.Models
             return color;
         }
     }
+
+    public class SortByStartIndex : IComparer<EntryModel>
+    {
+        public int Compare(EntryModel o1, EntryModel o2)
+        {
+            return o1.StartIndex.CompareTo(o2.StartIndex);
+        }
+    }
     public class EntryModel
     {
         public static int Offset { get; set; }
