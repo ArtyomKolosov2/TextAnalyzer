@@ -34,7 +34,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <WebBrowser DataContext="{Binding Path=_textModel.Text}" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="10" x:Name="MainWebBrowser"/>
+        <WebBrowser Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="10" x:Name="MainWebBrowser"/>
         <GroupBox Grid.Row="2" Grid.Column="0" Margin="10" Header="Mean">
             <ListView x:Name="ColorListView">
                 <ListView.ItemTemplate>
@@ -47,10 +47,11 @@
                 </ListView.ItemTemplate>
             </ListView>
         </GroupBox>
-        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" Margin="10">
+        <StackPanel x:Name="StackPan" Orientation="Vertical" Grid.Row="2" Grid.Column="1" Margin="10">
             <Button Height="auto" Margin="5" Click="Button_Click_1">Analyze</Button>
             <Button Height="auto" Margin="5" Click="Button_Click">Load File</Button>
             <Button Height="auto" Margin="5">Save File</Button>
+            <ProgressBar x:Name="ProgressBarAnalysys" Height="20" Margin="5" Minimum="0" Maximum="{Binding Path=MaxLen}" Value="{Binding Path=ReadyPercent}"/>
         </StackPanel>
     </Grid>
 </Window>

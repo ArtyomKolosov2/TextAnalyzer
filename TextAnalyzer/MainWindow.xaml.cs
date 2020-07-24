@@ -26,7 +26,7 @@ namespace TextAnalyzer
     {
         private string filePath;
 
-        TextModel _textModel;
+        public TextModel _textModel;
 
         Loader fileLoader;
 
@@ -39,7 +39,8 @@ namespace TextAnalyzer
         {
             _textModel = new TextModel();
             fileLoader = new Loader();
-            _textModel.PropertyChanged += TextModelChanged;
+            _textModel.TextChanged += TextModelChanged;
+            StackPan.DataContext = _textModel;
             ColorListView.ItemsSource = typeof(Colors).GetProperties();
             
         }
@@ -84,9 +85,8 @@ namespace TextAnalyzer
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            if (!_textModel.IsAnalyzed)
+            if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
             {
-
                 _textModel.StartWork();
             }
             else

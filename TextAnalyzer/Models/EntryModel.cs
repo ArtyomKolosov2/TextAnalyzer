@@ -69,6 +69,6 @@ namespace TextAnalyzer.Models
 
     public class EntryModelNum : EntryModel
     {
-        public int Num { get; set; }
+        public long Num { get; set; }
     }
 }

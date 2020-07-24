@@ -14,9 +14,37 @@ namespace TextAnalyzer.Models
     {
         public bool IsAnalyzed { get; private set; } = false;
 
+        public bool IsAnalasing { get; private set; } = false;
+
+        private int _readyPercent = 0;
+
+        private int _maxLen = 0;
+        public int ReadyPercent
+        {
+            get { return _readyPercent; }
+            set 
+            { 
+                _readyPercent = value;
+                OnChanged();
+            }
+        }
+
+        public int MaxLen
+        {
+            get { return _maxLen; }
+            set
+            {
+                _maxLen = value;
+                OnChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public List<EntryModel> EntryModels = new List<EntryModel>();
+        public event PropertyChangedEventHandler TextChanged;
+
+
+        private List<EntryModel> EntryModels = new List<EntryModel>();
 
         private List<EntryModel> LongestWords = new List<EntryModel>();
 
@@ -27,6 +55,11 @@ namespace TextAnalyzer.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private void OnTextChanged([CallerMemberName]string propertyName = null)
+        {
+            TextChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public StringBuilder _text = new StringBuilder();
         public Encoding CurrentEncoding { get; set; } = Encoding.UTF8;
         public async void StartWork()
@@ -34,13 +67,14 @@ namespace TextAnalyzer.Models
             bool flag = true;
             int index = 0;
             char[] array = new char[100];
+            MaxLen = _text.Length;
+            IsAnalasing = true;
             for (int i = 0; i < _text.Length; i++)
             {
                 char nextSymbol = _text[i];
                 if (nextSymbol == '<')
                 {
                     i += IgnoreHtmlTags(i) - 1;
-                    continue;
                 }
                 else if (IsLetterOrDigitMod(nextSymbol))
                 {
@@ -51,18 +85,18 @@ namespace TextAnalyzer.Models
                 else if (!flag)
                 {
                     string word = new string(array);
-                    FindLongestWord(word, i);
-                    FindBiggetsNum(word, i);
-                    Test(word, i, new char[] { 'а', 'ы', 'у', 'е', 'о', 'э', 'я', 'и', 'ю', 'ё' }, EntryCodes.OnlyVowel);
-                    Test(word, i, new char[] { 'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ' }, EntryCodes.OnlyConsonat);
-                    /*Task task1 = Task.Run(() => FindLongestWord(word, i));
-                    Task task2 = Task.Run(() => Test(word, i));
-                    await Task.WhenAll(new [] { task1, task2 });*/
+                    Task t1 = Task.Run( () => FindLongestWord(word, i));
+                    Task t2 = Task.Run( () => FindBiggetsNum(word, i));
+                    Task t3 = Task.Run ( () => Test(word, i, new char[] { 'а', 'ы', 'у', 'е', 'о', 'э', 'я', 'и', 'ю', 'ё' }, EntryCodes.OnlyVowel));
+                    Task t4 = Task.Run ( () => Test(word, i, new char[] { 'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ' }, EntryCodes.OnlyConsonat));
+                    await Task.WhenAll(new [] { t1, t2, t3, t4 });
                     array = new char[100];
+                    ReadyPercent = i;
                     flag = true;
                     index = 0;                
                 }
             }
+            IsAnalasing = false;
             GC.Collect();
             EntryModels.AddRange(LongestWords);
             EntryModels.AddRange(BiggestNums);
@@ -103,7 +137,6 @@ namespace TextAnalyzer.Models
 
         private void Test(string word, int endIndex, char[] symbols, EntryCodes codes)
         {
-            //char[] symbols = new char[] { 'a', 'i', 'e', 'o', 'u', 'y' };
             int trueLength = FindTrueLength(word);
             bool result = true;
             for (int i = 0; i < trueLength; i++)
@@ -174,13 +207,13 @@ namespace TextAnalyzer.Models
             int NumTrueLength = FindTrueLength(numPart);
             if (NumTrueLength != 0)
             {
-                int num = int.Parse(new string(numPart));
+                long newNum = long.Parse(new string(numPart));
                 if (BiggestNums.Count != 0) {
                     for (int i = 0; i < BiggestNums.Count; i++)
                     {
-                        if (num >= BiggestNums[i].Num)
+                        if (newNum >= BiggestNums[i].Num)
                         {
-                            if (num > BiggestNums[i].Num)
+                            if (newNum > BiggestNums[i].Num)
                             {
                                 BiggestNums.Clear();
                             }
@@ -188,7 +221,7 @@ namespace TextAnalyzer.Models
                             {
                                 StartIndex = endIndex - trueLength,
                                 EndIndex = endIndex - (trueLength - NumTrueLength),
-                                Num = num,
+                                Num = newNum,
                                 textColor = GetColor.GetColorByCode(EntryCodes.LongestNumber)
                             });
                             break;
@@ -201,7 +234,7 @@ namespace TextAnalyzer.Models
                     {
                         StartIndex = endIndex - trueLength,
                         EndIndex = endIndex - (trueLength - NumTrueLength),
-                        Num = num,
+                        Num = newNum,
                         textColor = GetColor.GetColorByCode(EntryCodes.LongestNumber)
                     });
                 }
@@ -219,7 +252,7 @@ namespace TextAnalyzer.Models
                 _text.Insert(entry.EndIndex+startString.Length, endString);
                 EntryModel.Offset += startString.Length + endString.Length;
             }
-            OnChanged();
+            OnTextChanged();
         }
 
         public int IgnoreHtmlTags(int startIndex)
@@ -246,7 +279,7 @@ namespace TextAnalyzer.Models
             ClearData();
             _text.Append($"<!DOCTYPE html><html><meta http-equiv='Content-Type'content='text/html;charset={CurrentEncoding.WebName}'><head></head><body>{value}</body></html>");
             ReplaceSpecialSymbols();
-            OnChanged();
+            OnTextChanged();
         }
 
         private void ClearData()
@@ -255,6 +288,8 @@ namespace TextAnalyzer.Models
             LongestWords.Clear();
             BiggestNums.Clear();
             EntryModels.Clear();
+            MaxLen = 0;
+            ReadyPercent = 0;
             EntryModel.Offset = 0;
             _text.Clear();
             GC.Collect();
