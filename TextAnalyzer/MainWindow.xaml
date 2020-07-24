@@ -50,7 +50,7 @@
         <StackPanel x:Name="StackPan" Orientation="Vertical" Grid.Row="2" Grid.Column="1" Margin="10">
             <Button Height="auto" Margin="5" Click="Button_Click_1">Analyze</Button>
             <Button Height="auto" Margin="5" Click="Button_Click">Load File</Button>
-            <Button Height="auto" Margin="5">Save File</Button>
+            <Button Height="auto" Margin="5" Click="Button_Click_2">Save File</Button>
             <ProgressBar x:Name="ProgressBarAnalysys" Height="20" Margin="5" Minimum="0" Maximum="{Binding Path=MaxLen}" Value="{Binding Path=ReadyPercent}"/>
         </StackPanel>
     </Grid>

@@ -11,17 +11,29 @@ namespace TextAnalyzer.Models
     {
         public void LoadFile(TextModel textModel, string path)
         {
-            using (FileStream fs = new FileStream(path, FileMode.Open))
+            
+            using (StreamReader streamReader = new StreamReader
+                    (
+                    new FileStream(path, FileMode.Open, FileAccess.Read), 
+                    textModel.CurrentEncoding
+                    )
+                )
             {
-                byte[] bytes = new byte[fs.Length];
-                fs.Read(bytes, 0, bytes.Length);
-                string myText = Encoding.Default.GetString(bytes);
+                string myText = streamReader.ReadToEnd();
                 textModel.SetNewText(myText);
             }
         }
-        public void SaveFile(TextModel textModel)
+        public void SaveFile(TextModel textModel, string path)
         {
-            ;
+            using (StreamWriter streamWriter = new StreamWriter
+                    (
+                    new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write),
+                    textModel.CurrentEncoding
+                    )
+                )
+            {
+                streamWriter.Write(textModel.Text);
+            }
         }
     }
 }

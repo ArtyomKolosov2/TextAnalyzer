@@ -44,11 +44,11 @@ namespace TextAnalyzer.Models
         public event PropertyChangedEventHandler TextChanged;
 
 
-        private List<EntryModel> EntryModels = new List<EntryModel>();
+        private List<EntryModel> _entryModels = new List<EntryModel>();
 
-        private List<EntryModel> LongestWords = new List<EntryModel>();
+        private List<EntryModel> _longestWords = new List<EntryModel>();
 
-        private List<EntryModelNum> BiggestNums = new List<EntryModelNum>();
+        private List<EntryModelNum> _biggestNums = new List<EntryModelNum>();
 
         private void OnChanged([CallerMemberName]string propertyName = null)
         {
@@ -84,13 +84,13 @@ namespace TextAnalyzer.Models
                 }
                 else if (!flag)
                 {
-                    string word = new string(array);
-                    Task t1 = Task.Run( () => FindLongestWord(word, i));
-                    Task t2 = Task.Run( () => FindBiggetsNum(word, i));
-                    Task t3 = Task.Run ( () => Test(word, i, new char[] { 'а', 'ы', 'у', 'е', 'о', 'э', 'я', 'и', 'ю', 'ё' }, EntryCodes.OnlyVowel));
-                    Task t4 = Task.Run ( () => Test(word, i, new char[] { 'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ' }, EntryCodes.OnlyConsonat));
-                    await Task.WhenAll(new [] { t1, t2, t3, t4 });
-                    array = new char[100];
+                    Task t1 = Task.Run( () => FindLongestWord(array, i));
+                    Task t2 = Task.Run( () => FindBiggetsNum(array, i));
+                    Task t3 = Task.Run ( () => Test(array, i, new char[] { 'а', 'ы', 'у', 'е', 'о', 'э', 'я', 'и', 'ю', 'ё' }, EntryCodes.OnlyVowel));
+                    Task t4 = Task.Run ( () => Test(array, i, new char[] { 'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ' }, EntryCodes.OnlyConsonat));
+                    
+                    await Task.WhenAll(new [] { t1, t2, t3, t4});
+                    ClearCharArray(array);
                     ReadyPercent = i;
                     flag = true;
                     index = 0;                
@@ -98,13 +98,22 @@ namespace TextAnalyzer.Models
             }
             IsAnalasing = false;
             GC.Collect();
-            EntryModels.AddRange(LongestWords);
-            EntryModels.AddRange(BiggestNums);
+            _entryModels.AddRange(_longestWords);
+            _entryModels.AddRange(_biggestNums);
             ColorizeEntries();
             IsAnalyzed = true;
             ;
         }
 
+        private void ClearCharArray(char [] array)
+        {
+            int index = 0;
+            while (array[index] != '\0')
+            {
+                array[index] = '\0';
+                index++;
+            }
+        } 
         private bool IsLetterOrDigitMod(char c)
         {
             char[] symbols = new char[] { '-', '\'', '"'};
@@ -135,7 +144,7 @@ namespace TextAnalyzer.Models
             return result;
         }
 
-        private void Test(string word, int endIndex, char[] symbols, EntryCodes codes)
+        private void Test(char [] word, int endIndex, char[] symbols, EntryCodes codes)
         {
             int trueLength = FindTrueLength(word);
             bool result = true;
@@ -149,7 +158,7 @@ namespace TextAnalyzer.Models
             }
             if (result)
             {
-                EntryModels.Add(new EntryModel
+                _entryModels.Add(new EntryModel
                 {
                     StartIndex = endIndex - trueLength,
                     EndIndex = endIndex,
@@ -158,20 +167,20 @@ namespace TextAnalyzer.Models
             }
         }
  
-        private void FindLongestWord(string word, int endIndex)
+        private void FindLongestWord(char [] word, int endIndex)
         {
             int trueLength = FindTrueLength(word);
-            if (LongestWords.Count != 0)
+            if (_longestWords.Count != 0)
             {
-                for (int i = 0; i < LongestWords.Count; i++)
+                for (int i = 0; i < _longestWords.Count; i++)
                 {
-                    if (trueLength >= LongestWords[i].Length)
+                    if (trueLength >= _longestWords[i].Length)
                     {
-                        if (trueLength > LongestWords[i].Length)
+                        if (trueLength > _longestWords[i].Length)
                         {
-                            LongestWords.Clear(); 
+                            _longestWords.Clear(); 
                         }
-                        LongestWords.Add(new EntryModel
+                        _longestWords.Add(new EntryModel
                         {
                             StartIndex = endIndex - trueLength,
                             EndIndex = endIndex,
@@ -183,7 +192,7 @@ namespace TextAnalyzer.Models
             }
             else
             {
-                LongestWords.Add(new EntryModel
+                _longestWords.Add(new EntryModel
                 {
                     StartIndex = endIndex - trueLength,
                     EndIndex = endIndex,
@@ -192,7 +201,7 @@ namespace TextAnalyzer.Models
             }
         }
 
-        private void FindBiggetsNum(string word, int endIndex)
+        private void FindBiggetsNum(char [] word, int endIndex)
         {
             int trueLength = FindTrueLength(word);
             char[] numPart = new char[trueLength];
@@ -208,16 +217,16 @@ namespace TextAnalyzer.Models
             if (NumTrueLength != 0)
             {
                 long newNum = long.Parse(new string(numPart));
-                if (BiggestNums.Count != 0) {
-                    for (int i = 0; i < BiggestNums.Count; i++)
+                if (_biggestNums.Count != 0) {
+                    for (int i = 0; i < _biggestNums.Count; i++)
                     {
-                        if (newNum >= BiggestNums[i].Num)
+                        if (newNum >= _biggestNums[i].Num)
                         {
-                            if (newNum > BiggestNums[i].Num)
+                            if (newNum > _biggestNums[i].Num)
                             {
-                                BiggestNums.Clear();
+                                _biggestNums.Clear();
                             }
-                            BiggestNums.Add(new EntryModelNum
+                            _biggestNums.Add(new EntryModelNum
                             {
                                 StartIndex = endIndex - trueLength,
                                 EndIndex = endIndex - (trueLength - NumTrueLength),
@@ -230,7 +239,7 @@ namespace TextAnalyzer.Models
                 }
                 else
                 {
-                    BiggestNums.Add(new EntryModelNum
+                    _biggestNums.Add(new EntryModelNum
                     {
                         StartIndex = endIndex - trueLength,
                         EndIndex = endIndex - (trueLength - NumTrueLength),
@@ -243,8 +252,8 @@ namespace TextAnalyzer.Models
 
         private void ColorizeEntries()
         {
-            EntryModels.Sort(new SortByStartIndex());
-            foreach (var entry in EntryModels)
+            _entryModels.Sort(new SortByStartIndex());
+            foreach (var entry in _entryModels)
             {
                 string startString = $"<span style=\"background:{ColorTranslator.ToHtml(entry.textColor)}\">",
                     endString = $"</span>";
@@ -285,9 +294,9 @@ namespace TextAnalyzer.Models
         private void ClearData()
         {
             IsAnalyzed = false;
-            LongestWords.Clear();
-            BiggestNums.Clear();
-            EntryModels.Clear();
+            _longestWords.Clear();
+            _biggestNums.Clear();
+            _entryModels.Clear();
             MaxLen = 0;
             ReadyPercent = 0;
             EntryModel.Offset = 0;

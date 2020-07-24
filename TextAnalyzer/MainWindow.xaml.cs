@@ -74,6 +74,21 @@ namespace TextAnalyzer
             return result;
         }
 
+        private bool SaveFile()
+        {
+            bool result = false;
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Text Files (*.txt)|*.txt|HTML Files (*.htm,*.html)|*.htm*.html"
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                FilePath = saveFileDialog.FileName;
+                result = true;
+            }
+            return result;
+        }
+
         public string FilePath
         {
             get { return filePath; }
@@ -92,6 +107,22 @@ namespace TextAnalyzer
             else
             {
                 MessageBox.Show("Text Already Analyzed!");
+            }
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if (_textModel.IsAnalyzed && !_textModel.IsAnalasing)
+            {
+                bool openResult = SaveFile();
+                if (openResult && FilePath != null)
+                {
+                    fileLoader.SaveFile(_textModel, FilePath);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Text still Analysing!");
             }
         }
     }
