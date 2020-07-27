@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace TextAnalyzer.Models
@@ -22,8 +21,8 @@ namespace TextAnalyzer.Models
         public int ReadyPercent
         {
             get { return _readyPercent; }
-            set 
-            { 
+            set
+            {
                 _readyPercent = value;
                 OnChanged();
             }
@@ -84,16 +83,16 @@ namespace TextAnalyzer.Models
                 }
                 else if (!flag)
                 {
-                    Task t1 = Task.Run( () => FindLongestWord(array, i));
-                    Task t2 = Task.Run( () => FindBiggetsNum(array, i));
-                    Task t3 = Task.Run ( () => Test(array, i, new char[] { 'а', 'ы', 'у', 'е', 'о', 'э', 'я', 'и', 'ю', 'ё' }, EntryCodes.OnlyVowel));
-                    Task t4 = Task.Run ( () => Test(array, i, new char[] { 'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ' }, EntryCodes.OnlyConsonat));
-                    
-                    await Task.WhenAll(new [] { t1, t2, t3, t4});
+                    Task t1 = Task.Run(() => FindLongestWord(array, i));
+                    Task t2 = Task.Run(() => FindBiggetsNum(array, i));
+                    Task t3 = Task.Run(() => Test(array, i, new char[] { 'а', 'ы', 'у', 'е', 'о', 'э', 'я', 'и', 'ю', 'ё' }, EntryCodes.OnlyVowel));
+                    Task t4 = Task.Run(() => Test(array, i, new char[] { 'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ' }, EntryCodes.OnlyConsonat));
+
+                    await Task.WhenAll(new[] { t1, t2, t3, t4 });
                     ClearCharArray(array);
                     ReadyPercent = i;
                     flag = true;
-                    index = 0;                
+                    index = 0;
                 }
             }
             IsAnalasing = false;
@@ -105,7 +104,7 @@ namespace TextAnalyzer.Models
             ;
         }
 
-        private void ClearCharArray(char [] array)
+        private void ClearCharArray(char[] array)
         {
             int index = 0;
             while (array[index] != '\0')
@@ -113,24 +112,24 @@ namespace TextAnalyzer.Models
                 array[index] = '\0';
                 index++;
             }
-        } 
+        }
         private bool IsLetterOrDigitMod(char c)
         {
-            char[] symbols = new char[] { '-', '\'', '"'};
+            char[] symbols = new char[] { '-', '\'', '"' };
             return char.IsLetterOrDigit(c) || symbols.Contains(c);
         }
 
         private int FindTrueLength(string word)
         {
             int result = 0;
-            for (int i = 0; word[i]!='\0'; i++)
+            for (int i = 0; word[i] != '\0'; i++)
             {
                 result++;
             }
             return result;
         }
 
-        private int FindTrueLength(char [] word)
+        private int FindTrueLength(char[] word)
         {
             int result = 0;
             for (int i = 0; i < word.Length; i++)
@@ -144,7 +143,7 @@ namespace TextAnalyzer.Models
             return result;
         }
 
-        private void Test(char [] word, int endIndex, char[] symbols, EntryCodes codes)
+        private void Test(char[] word, int endIndex, char[] symbols, EntryCodes codes)
         {
             int trueLength = FindTrueLength(word);
             bool result = true;
@@ -166,8 +165,8 @@ namespace TextAnalyzer.Models
                 });
             }
         }
- 
-        private void FindLongestWord(char [] word, int endIndex)
+
+        private void FindLongestWord(char[] word, int endIndex)
         {
             int trueLength = FindTrueLength(word);
             if (_longestWords.Count != 0)
@@ -178,7 +177,7 @@ namespace TextAnalyzer.Models
                     {
                         if (trueLength > _longestWords[i].Length)
                         {
-                            _longestWords.Clear(); 
+                            _longestWords.Clear();
                         }
                         _longestWords.Add(new EntryModel
                         {
@@ -201,7 +200,7 @@ namespace TextAnalyzer.Models
             }
         }
 
-        private void FindBiggetsNum(char [] word, int endIndex)
+        private void FindBiggetsNum(char[] word, int endIndex)
         {
             int trueLength = FindTrueLength(word);
             char[] numPart = new char[trueLength];
@@ -217,7 +216,8 @@ namespace TextAnalyzer.Models
             if (NumTrueLength != 0)
             {
                 long newNum = long.Parse(new string(numPart));
-                if (_biggestNums.Count != 0) {
+                if (_biggestNums.Count != 0)
+                {
                     for (int i = 0; i < _biggestNums.Count; i++)
                     {
                         if (newNum >= _biggestNums[i].Num)
@@ -258,7 +258,7 @@ namespace TextAnalyzer.Models
                 string startString = $"<span style=\"background:{ColorTranslator.ToHtml(entry.textColor)}\">",
                     endString = $"</span>";
                 _text.Insert(entry.StartIndex, startString);
-                _text.Insert(entry.EndIndex+startString.Length, endString);
+                _text.Insert(entry.EndIndex + startString.Length, endString);
                 EntryModel.Offset += startString.Length + endString.Length;
             }
             OnTextChanged();
@@ -270,7 +270,7 @@ namespace TextAnalyzer.Models
                         i = startIndex,
                         result = 0;
             char nextSymbol = _text[i];
-            while  (nextSymbol != '>')
+            while (nextSymbol != '>')
             {
                 if ((i - startIndex) > overgoCheckIndex)
                 {
@@ -307,11 +307,11 @@ namespace TextAnalyzer.Models
         public string Text
         {
             get { return _text.ToString(); }
-        } 
+        }
 
         private void ReplaceSpecialSymbols()
         {
-             _text.Replace("\n", "<br>");
+            _text.Replace("\n", "<br>");
         }
     }
 }
