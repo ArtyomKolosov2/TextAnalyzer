@@ -60,7 +60,7 @@ namespace TextAnalyzer.Models
 
         public StringBuilder _text = new StringBuilder();
         public Encoding CurrentEncoding { get; set; } = Encoding.UTF8;
-        public async void StartWork()
+        public async void StartWork(MainWindow main)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             bool flag = true;
@@ -95,11 +95,11 @@ namespace TextAnalyzer.Models
                 }
                 
             }
-            IsAnalasing = false;
             _entryModels.AddRange(_longestWords);
             _entryModels.AddRange(_biggestNums);
-            ColorizeEntries();
+            ColorizeEntries(main);
             IsAnalyzed = true;
+            IsAnalasing = false;
             stopwatch.Stop();
             GC.Collect();
             MessageBox.Show(stopwatch.Elapsed.ToString());
@@ -256,7 +256,7 @@ namespace TextAnalyzer.Models
             }
         }
 
-        private void ColorizeEntries()
+        private void ColorizeEntries(MainWindow main)
         {
             _entryModels.Sort(new SortByStartIndex());
             foreach (var entry in _entryModels)
@@ -267,7 +267,7 @@ namespace TextAnalyzer.Models
                 _text.Insert(entry.EndIndex + startString.Length, endString);
                 EntryModel.Offset += startString.Length + endString.Length;
             }
-            TextChanged?.Invoke(Text);
+            main.Dispatcher?.Invoke(new Action(() => main.MainWebBrowser.NavigateToString(Text)));
         }
 
         public int IgnoreHtmlTags(int startIndex)

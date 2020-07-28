@@ -47,15 +47,6 @@ namespace TextAnalyzer
             MainWebBrowser.NavigateToString(newText);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            bool openResult = OpenFile();
-            if (openResult && FilePath != null)
-            {
-                Loader.LoadFile(_textModel, FilePath);   
-            }
-        }
-
         private bool OpenFile() 
         {
             bool result = false;
@@ -86,13 +77,27 @@ namespace TextAnalyzer
             return result;
         }
 
-        
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_textModel.IsAnalasing)
+            {
+                bool openResult = OpenFile();
+                if (openResult && FilePath != null)
+                {
+                    Loader.LoadFile(_textModel, FilePath);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Text still Analysing!");
+            }  
+        }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
             {
-                _textModel.StartWork();
+                await Task.Run(() => {_textModel.StartWork(this); });
             }
             else
             {
