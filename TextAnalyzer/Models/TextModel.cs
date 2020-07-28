@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace TextAnalyzer.Models
 {
@@ -72,10 +74,12 @@ namespace TextAnalyzer.Models
         public Encoding CurrentEncoding { get; set; } = Encoding.UTF8;
         public async void StartWork()
         {
+            Stopwatch stopwatch = Stopwatch.StartNew();
             bool flag = true;
             int index = 0;
             char[] array = new char[100];
             MaxLen = _text.Length;
+            double onePercent = 100.0 / MaxLen;
             IsAnalasing = true;
             for (int i = 0; i < _text.Length; i++)
             {
@@ -96,13 +100,13 @@ namespace TextAnalyzer.Models
                     Task t2 = Task.Run(() => FindBiggetsNum(array, i));
                     Task t3 = Task.Run(() => FindSymbols(array, i, EntryCodes.OnlyVowel));
                     Task t4 = Task.Run(() => FindSymbols(array, i, EntryCodes.OnlyConsonat));
-
+                    ReadyPercent = (int)Math.Round(i * onePercent);
                     await Task.WhenAll(new[] { t1, t2, t3, t4 });
                     ClearCharArray(array);
-                    ReadyPercent = i;
                     flag = true;
                     index = 0;
                 }
+                
             }
             IsAnalasing = false;
             GC.Collect();
@@ -110,6 +114,8 @@ namespace TextAnalyzer.Models
             _entryModels.AddRange(_biggestNums);
             ColorizeEntries();
             IsAnalyzed = true;
+            stopwatch.Stop();
+            MessageBox.Show(stopwatch.Elapsed.ToString());
             ;
         }
 
