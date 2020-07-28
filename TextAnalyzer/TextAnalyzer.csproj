@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\EntryModel.cs" />
+    <Compile Include="Models\LanguageContainer.cs" />
     <Compile Include="Models\Loader.cs" />
     <Compile Include="Models\TextModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

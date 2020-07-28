@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TextAnalyzer.Models
 {
@@ -49,7 +45,7 @@ namespace TextAnalyzer.Models
         public static int Offset { get; set; }
         private int startIndex;
         private int endIndex;
-        public Color textColor { get; set; }
+        public Color TextColor { get; set; }
 
         public int StartIndex
         {

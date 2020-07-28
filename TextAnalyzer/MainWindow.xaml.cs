@@ -1,20 +1,6 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using TextAnalyzer.Models;
 
 namespace TextAnalyzer
@@ -24,9 +10,8 @@ namespace TextAnalyzer
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string filePath;
-
         public TextModel _textModel;
+        public string FilePath { get; set; }
 
         Loader fileLoader;
 
@@ -41,13 +26,14 @@ namespace TextAnalyzer
             fileLoader = new Loader();
             _textModel.TextChanged += TextModelChanged;
             StackPan.DataContext = _textModel;
+            InfoListView.DataContext = _textModel;
             ColorListView.ItemsSource = typeof(Colors).GetProperties();
             
         }
 
-        private void TextModelChanged(object sender, PropertyChangedEventArgs e)
+        private void TextModelChanged(string newText)
         {
-            MainWebBrowser.NavigateToString(_textModel.Text);
+            MainWebBrowser.NavigateToString(newText);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -87,15 +73,6 @@ namespace TextAnalyzer
                 result = true;
             }
             return result;
-        }
-
-        public string FilePath
-        {
-            get { return filePath; }
-            set
-            {
-                filePath = value;
-            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

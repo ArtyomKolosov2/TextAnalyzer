@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace TextAnalyzer.Models
 {
     public class Loader
     {
-        public void LoadFile(TextModel textModel, string path)
+        public async void LoadFile(TextModel textModel, string path)
         {
             
             using (StreamReader streamReader = new StreamReader
@@ -19,7 +14,7 @@ namespace TextAnalyzer.Models
                     )
                 )
             {
-                string myText = streamReader.ReadToEnd();
+                string myText = await streamReader.ReadToEndAsync();
                 textModel.SetNewText(myText);
             }
         }
