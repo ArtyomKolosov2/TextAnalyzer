@@ -2,9 +2,9 @@
 
 namespace TextAnalyzer.Models
 {
-    public class Loader
+    public static class Loader
     {
-        public async void LoadFile(TextModel textModel, string path)
+        public async static void LoadFile(TextModel textModel, string path)
         {
             
             using (StreamReader streamReader = new StreamReader
@@ -18,7 +18,7 @@ namespace TextAnalyzer.Models
                 textModel.SetNewText(myText);
             }
         }
-        public void SaveFile(TextModel textModel, string path)
+        public static async void SaveFile(TextModel textModel, string path)
         {
             using (StreamWriter streamWriter = new StreamWriter
                     (
@@ -27,7 +27,7 @@ namespace TextAnalyzer.Models
                     )
                 )
             {
-                streamWriter.Write(textModel.Text);
+                await streamWriter.WriteAsync(textModel.Text);
             }
         }
     }

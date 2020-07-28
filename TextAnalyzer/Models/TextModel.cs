@@ -19,8 +19,6 @@ namespace TextAnalyzer.Models
 
         private int _readyPercent = 0;
 
-        private int _maxLen = 0;
-
         private int _symbolsAmount = 0;
         public int ReadyPercent
         {
@@ -38,16 +36,6 @@ namespace TextAnalyzer.Models
             set
             {
                 _symbolsAmount = value;
-                OnChanged();
-            }
-        }
-
-        public int MaxLen
-        {
-            get { return _maxLen; }
-            set
-            {
-                _maxLen = value;
                 OnChanged();
             }
         }
@@ -78,8 +66,7 @@ namespace TextAnalyzer.Models
             bool flag = true;
             int index = 0;
             char[] array = new char[100];
-            MaxLen = _text.Length;
-            double onePercent = 100.0 / MaxLen;
+            double onePercent = 100.0 / _text.Length;
             IsAnalasing = true;
             for (int i = 0; i < _text.Length; i++)
             {
@@ -109,14 +96,13 @@ namespace TextAnalyzer.Models
                 
             }
             IsAnalasing = false;
-            GC.Collect();
             _entryModels.AddRange(_longestWords);
             _entryModels.AddRange(_biggestNums);
             ColorizeEntries();
             IsAnalyzed = true;
             stopwatch.Stop();
+            GC.Collect();
             MessageBox.Show(stopwatch.Elapsed.ToString());
-            ;
         }
 
         private void ClearCharArray(char[] array)
@@ -319,7 +305,6 @@ namespace TextAnalyzer.Models
             _longestWords.Clear();
             _biggestNums.Clear();
             _entryModels.Clear();
-            MaxLen = 0;
             ReadyPercent = 0;
             EntryModel.Offset = 0;
             _text.Clear();

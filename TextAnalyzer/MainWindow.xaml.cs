@@ -27,8 +27,6 @@ namespace TextAnalyzer
         public TextModel _textModel;
         public string FilePath { get; set; }
 
-        Loader fileLoader;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -37,7 +35,6 @@ namespace TextAnalyzer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _textModel = new TextModel();
-            fileLoader = new Loader();
             _textModel.TextChanged += TextModelChanged;
             StackPan.DataContext = _textModel;
             InfoListView.DataContext = _textModel;
@@ -55,7 +52,7 @@ namespace TextAnalyzer
             bool openResult = OpenFile();
             if (openResult && FilePath != null)
             {
-                fileLoader.LoadFile(_textModel, FilePath);   
+                Loader.LoadFile(_textModel, FilePath);   
             }
         }
 
@@ -110,7 +107,7 @@ namespace TextAnalyzer
                 bool openResult = SaveFile();
                 if (openResult && FilePath != null)
                 {
-                    fileLoader.SaveFile(_textModel, FilePath);
+                    Loader.SaveFile(_textModel, FilePath);
                 }
             }
             else
