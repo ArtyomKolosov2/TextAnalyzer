@@ -60,7 +60,9 @@
             <Button Height="auto" Margin="5" Click="Button_Click_1">Analyze</Button>
             <Button Height="auto" Margin="5" Click="Button_Click">Load File</Button>
             <Button Height="auto" Margin="5" Click="Button_Click_2">Save File</Button>
-            <ProgressBar x:Name="ProgressBarAnalysys" Background="White" Height="20" Margin="5" Minimum="0" Maximum="{Binding Path=MaxLen}" Value="{Binding Path=ReadyPercent}"/>
+            <GroupBox Header="{Binding StringFormat=ReadyPercent {0}, Path=ReadyPercent}">
+                <ProgressBar x:Name="ProgressBarAnalysys" Background="White" Height="20" Margin="5" Minimum="0" Maximum="{Binding Path=MaxLen}" Value="{Binding Path=ReadyPercent}"/>
+            </GroupBox>
         </StackPanel>
     </Grid>
 </Window>
