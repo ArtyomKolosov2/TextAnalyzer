@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,11 +24,8 @@ namespace TextAnalyzer
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string filePath;
-
-        TextModel _textModel;
-
-        Loader fileLoader;
+        public TextModel _textModel;
+        public string FilePath { get; set; }
 
         public MainWindow()
         {
@@ -37,31 +35,25 @@ namespace TextAnalyzer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _textModel = new TextModel();
-            fileLoader = new Loader();
-            _textModel.PropertyChanged += TextModelChanged;
+            _textModel.TextChanged += TextModelChanged;
+            StackPan.DataContext = _textModel;
+            InfoListView.DataContext = _textModel;
             ColorListView.ItemsSource = typeof(Colors).GetProperties();
             
         }
 
-        private void TextModelChanged(object sender, PropertyChangedEventArgs e)
+        private void TextModelChanged(string newText)
         {
-            MainWebBrowser.NavigateToString(_textModel.Text);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            bool openResult = OpenFile();
-            if (openResult && FilePath != null)
-            {
-                fileLoader.LoadFile(_textModel, FilePath);   
-            }
+            MainWebBrowser.NavigateToString(newText);
         }
 
         private bool OpenFile() 
         {
             bool result = false;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Text Files (*.txt)|*.txt|HTML Files (*.html,*.htm)|*.html*.htm| All files (*.*)|*.*";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Text Files (*.txt)|*.txt|HTML Files (*.html,*.htm)|*.html*.htm| All files (*.*)|*.*"
+            };
             if (openFileDialog.ShowDialog() == true)
             {
                 FilePath = openFileDialog.FileName;
@@ -70,18 +62,63 @@ namespace TextAnalyzer
             return result;
         }
 
-        public string FilePath
+        private bool SaveFile()
         {
-            get { return filePath; }
-            set
+            bool result = false;
+            SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                filePath = value;
+                Filter = "Text Files (*.txt)|*.txt|HTML Files (*.htm,*.html)|*.htm*.html"
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                FilePath = saveFileDialog.FileName;
+                result = true;
+            }
+            return result;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_textModel.IsAnalasing)
+            {
+                bool openResult = OpenFile();
+                if (openResult && FilePath != null)
+                {
+                    Loader.LoadFile(_textModel, FilePath);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Text still Analysing!");
+            }  
+        }
+
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
+            {
+                await Task.Run(() => {_textModel.StartWork(this); });
+            }
+            else
+            {
+                MessageBox.Show("Text Already Analyzed!");
             }
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            _textModel.StartWork();
+            if (_textModel.IsAnalyzed && !_textModel.IsAnalasing)
+            {
+                bool openResult = SaveFile();
+                if (openResult && FilePath != null)
+                {
+                    Loader.SaveFile(_textModel, FilePath);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Text still Analysing!");
+            }
         }
     }
 }

@@ -1,24 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace TextAnalyzer.Models
 {
-    public class Loader
+    public static class Loader
     {
-        public void LoadFile(TextModel textModel, string path)
+        public async static void LoadFile(TextModel textModel, string path)
         {
-            using (FileStream fs = new FileStream(path, FileMode.Open))
-            {
-                byte[] bytes = new byte[fs.Length];
-                fs.Read(bytes, 0, bytes.Length);
-                string myText = Encoding.Default.GetString(bytes);
-                textModel.Text = myText;
-            }
             
+            using (StreamReader streamReader = new StreamReader
+                    (
+                    new FileStream(path, FileMode.Open, FileAccess.Read), 
+                    textModel.CurrentEncoding
+                    )
+                )
+            {
+                string myText = await streamReader.ReadToEndAsync();
+                textModel.SetNewText(myText);
+            }
+        }
+        public static async void SaveFile(TextModel textModel, string path)
+        {
+            using (StreamWriter streamWriter = new StreamWriter
+                    (
+                    new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write),
+                    textModel.CurrentEncoding
+                    )
+                )
+            {
+                await streamWriter.WriteAsync(textModel.Text);
+            }
         }
     }
 }

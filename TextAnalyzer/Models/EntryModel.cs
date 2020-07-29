@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace TextAnalyzer.Models
 {
@@ -19,10 +15,10 @@ namespace TextAnalyzer.Models
     {
         private static Color [] textColors = new Color[]
         {
-            Colors.Gold,
-            Colors.Orange,
-            Colors.Aquamarine,
-            Colors.Aqua
+            Color.Gold,
+            Color.Orange,
+            Color.Aquamarine,
+            Color.Aqua
         };
             
         public static Color GetColorByCode(EntryCodes code) 
@@ -36,10 +32,39 @@ namespace TextAnalyzer.Models
             return color;
         }
     }
+
+    public class SortByStartIndex : IComparer<EntryModel>
+    {
+        public int Compare(EntryModel o1, EntryModel o2)
+        {
+            return o1.StartIndex.CompareTo(o2.StartIndex);
+        }
+    }
     public class EntryModel
     {
-        public int StartIndex { get; set; }
-        public int EndIndex { get; set; }
-        public Color textColor { get; set; }
+        public static int Offset { get; set; }
+        private int startIndex;
+        private int endIndex;
+        public Color TextColor { get; set; }
+
+        public int StartIndex
+        {
+            get { return startIndex + Offset; }
+            set { startIndex = value; }
+        }
+        public int EndIndex
+        {
+            get { return endIndex + Offset; }
+            set { endIndex = value; }
+        }
+        public int Length
+        {
+            get { return EndIndex - StartIndex; }
+        }
+    }
+
+    public class EntryModelNum : EntryModel
+    {
+        public long Num { get; set; }
     }
 }

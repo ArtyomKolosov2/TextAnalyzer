@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TextAnalyzer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" >
+        Title="TextAnalazyer Beta" Height="450" Width="800" Loaded="Window_Loaded" >
     <Window.Background>
         <RadialGradientBrush>
             <RadialGradientBrush.GradientStops>
@@ -26,6 +26,8 @@
     </Window.Resources>
     <Grid Style="{StaticResource MainFontSettings}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
@@ -34,23 +36,33 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <WebBrowser DataContext="{Binding Path=_textModel.Text}" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="10" x:Name="MainWebBrowser"/>
-        <GroupBox Grid.Row="2" Grid.Column="0" Margin="10" Header="Mean">
-            <ListView x:Name="ColorListView">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Rectangle Width="10" Height="10" Fill="{Binding Path=Name}"/>
-                            <TextBlock Text="{Binding StringFormat= - {0}, Path=Name}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </GroupBox>
-        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" Margin="10">
+        <WebBrowser Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="10" x:Name="MainWebBrowser"/>
+        <StackPanel Margin="10" Grid.Row="2" Grid.RowSpan="3" Grid.Column="0" Orientation="Vertical">
+            <GroupBox MaxHeight="100" Margin="5, 0, 5, 0" Header="Mean">
+                <ListView x:Name="ColorListView">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="10" Height="10" Fill="{Binding Path=Name}"/>
+                                <TextBlock Text="{Binding StringFormat= - {0}, Path=Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </GroupBox>
+            <GroupBox Margin="5, 5, 5, 5" Header="Info">
+                <ListView x:Name="InfoListView">
+                    <TextBlock Text="{Binding StringFormat= Symbols in Text - {0}, Path=SymbolsAmount}"/>
+                </ListView>
+            </GroupBox>
+        </StackPanel>
+        <StackPanel x:Name="StackPan" Orientation="Vertical" Grid.Row="2" Grid.RowSpan="3" Grid.Column="1" Margin="10">
             <Button Height="auto" Margin="5" Click="Button_Click_1">Analyze</Button>
             <Button Height="auto" Margin="5" Click="Button_Click">Load File</Button>
-            <Button Height="auto" Margin="5">Save File</Button>
+            <Button Height="auto" Margin="5" Click="Button_Click_2">Save File</Button>
+            <GroupBox Header="{Binding StringFormat=ReadyPercent {0}, Path=ReadyPercent}">
+                <ProgressBar x:Name="ProgressBarAnalysys" Background="White" Height="20" Margin="5" Minimum="0" Maximum="100" Value="{Binding Path=ReadyPercent}"/>
+            </GroupBox>
         </StackPanel>
     </Grid>
 </Window>
