@@ -20,6 +20,8 @@ namespace TextAnalyzer.Models
         private int _readyPercent = 0;
 
         private int _symbolsAmount = 0;
+
+        private int _wordsAmount = 0;
         public int ReadyPercent
         {
             get { return _readyPercent; }
@@ -36,6 +38,16 @@ namespace TextAnalyzer.Models
             set
             {
                 _symbolsAmount = value;
+                OnChanged();
+            }
+        }
+
+        public int WordsAmount
+        {
+            get { return _wordsAmount; }
+            set
+            {
+                _wordsAmount = value;
                 OnChanged();
             }
         }
@@ -87,9 +99,10 @@ namespace TextAnalyzer.Models
                     Task t2 = Task.Run(() => FindBiggetsNum(array, i));
                     Task t3 = Task.Run(() => FindSymbols(array, i, EntryCodes.OnlyVowel));
                     Task t4 = Task.Run(() => FindSymbols(array, i, EntryCodes.OnlyConsonat));
-                    ReadyPercent = (int)Math.Round(i * onePercent);
+                    ReadyPercent = (int)(i * onePercent);
                     await Task.WhenAll(new[] { t1, t2, t3, t4 });
                     ClearCharArray(array);
+                    WordsAmount++;
                     flag = true;
                     index = 0;
                 }
@@ -98,6 +111,7 @@ namespace TextAnalyzer.Models
             _entryModels.AddRange(_longestWords);
             _entryModels.AddRange(_biggestNums);
             ColorizeEntries(main);
+            ReadyPercent = 100;
             IsAnalyzed = true;
             IsAnalasing = false;
             stopwatch.Stop();
@@ -272,7 +286,7 @@ namespace TextAnalyzer.Models
 
         public int IgnoreHtmlTags(int startIndex)
         {
-            int overgoCheckIndex = 100,
+            int overgoCheckIndex = 300,
                         i = startIndex,
                         result = 0;
             char nextSymbol = _text[i];
@@ -306,6 +320,7 @@ namespace TextAnalyzer.Models
             _biggestNums.Clear();
             _entryModels.Clear();
             ReadyPercent = 0;
+            WordsAmount = 0;
             EntryModel.Offset = 0;
             _text.Clear();
             GC.Collect();
