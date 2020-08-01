@@ -231,8 +231,8 @@ namespace TextAnalyzer.Modules
                 }
                 else { break; }
             }
-            int NumTrueLength = FindTrueLength(numPart);
-            if (NumTrueLength != 0)
+            int numTrueLength = FindTrueLength(numPart);
+            if (numTrueLength != 0)
             {
                 long newNum = long.Parse(new string(numPart));
                 if (_biggestNums.Count != 0)
@@ -248,9 +248,9 @@ namespace TextAnalyzer.Modules
                             _biggestNums.Add(new EntryModelNum
                             {
                                 StartIndex = endIndex - trueLength,
-                                EndIndex = endIndex - (trueLength - NumTrueLength),
+                                EndIndex = endIndex - (trueLength - numTrueLength),
                                 Num = newNum,
-                                TextColor = GetColor.GetColorByCode(EntryCodes.LongestNumber)
+                                TextColor = GetColor.GetColorByCode(EntryCodes.LargestNumber)
                             });
                             break;
                         }
@@ -261,9 +261,9 @@ namespace TextAnalyzer.Modules
                     _biggestNums.Add(new EntryModelNum
                     {
                         StartIndex = endIndex - trueLength,
-                        EndIndex = endIndex - (trueLength - NumTrueLength),
+                        EndIndex = endIndex - (trueLength - numTrueLength),
                         Num = newNum,
-                        TextColor = GetColor.GetColorByCode(EntryCodes.LongestNumber)
+                        TextColor = GetColor.GetColorByCode(EntryCodes.LargestNumber)
                     });
                 }
             }

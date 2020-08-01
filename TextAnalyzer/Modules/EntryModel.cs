@@ -7,7 +7,7 @@ namespace TextAnalyzer.Modules
     public enum EntryCodes
     {
         LongestWord,
-        LongestNumber,
+        LargestNumber,
         OnlyConsonat,
         OnlyVowel,
     }

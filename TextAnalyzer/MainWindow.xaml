@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TextAnalyzer"
         mc:Ignorable="d"
-        Title="TextAnalazyer Beta" Height="auto" Width="800" Loaded="Window_Loaded" >
+        Title="TextAnalazyer Beta" Height="500" Width="800" Loaded="Window_Loaded" >
     <Window.Background>
         <RadialGradientBrush>
             <RadialGradientBrush.GradientStops>
