@@ -38,7 +38,7 @@
         </Grid.ColumnDefinitions>
         <WebBrowser Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="10" x:Name="MainWebBrowser"/>
         <StackPanel Margin="10" Grid.Row="2" Grid.RowSpan="3" Grid.Column="0" Orientation="Vertical">
-            <GroupBox MaxHeight="100" Margin="5, -3, 5, 0" Header="Mean">
+            <GroupBox MaxHeight="100" Margin="5, -3, 5, 0" Header="Color meaning">
                 <ListView x:Name="ColorListView">
                     <ListView.ItemTemplate>
                         <DataTemplate>

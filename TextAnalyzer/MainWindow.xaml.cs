@@ -111,7 +111,7 @@ namespace TextAnalyzer
             }
             else
             {
-                MessageBox.Show("Text still Analysing!");
+                MessageBox.Show("The text is currently being analyzed");
             }  
         }
 
@@ -123,7 +123,7 @@ namespace TextAnalyzer
             }
             else
             {
-                MessageBox.Show("Text Already Analyzed!");
+                MessageBox.Show("The text has already been analyzed");
             }
         }
 
@@ -139,7 +139,7 @@ namespace TextAnalyzer
             }
             else
             {
-                MessageBox.Show("Text still Analysing!");
+                MessageBox.Show("The text is currently being analyzed");
             }
         }
     }

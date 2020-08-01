@@ -36,7 +36,7 @@
             return result;
         }
 
-        public static char [] GetCharArray(char c, EntryCodes code)
+        public static char [] GetSymbolsArray(char c, EntryCodes code)
         {
             char[] result = null;
             LanguageContainer language = GetLanguageContainer(c);

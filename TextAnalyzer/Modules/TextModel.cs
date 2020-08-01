@@ -73,7 +73,6 @@ namespace TextAnalyzer.Modules
         public Encoding CurrentEncoding { get; set; } = Encoding.UTF8;
         public async void StartWork(MainWindow main)
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
             bool flag = true;
             int index = 0;
             char[] array = new char[100];
@@ -113,9 +112,7 @@ namespace TextAnalyzer.Modules
             ReadyPercent = 100;
             IsAnalyzed = true;
             IsAnalasing = false;
-            stopwatch.Stop();
             GC.Collect();
-            MessageBox.Show(stopwatch.Elapsed.ToString());
         }
 
         private void ClearCharArray(char[] array)
@@ -167,7 +164,7 @@ namespace TextAnalyzer.Modules
             bool result = true;
             for (int i = 0; i < trueLength; i++)
             {
-                symbols = LanguageGetter.GetCharArray(word[i], codes);
+                symbols = LanguageGetter.GetSymbolsArray(word[i], codes);
                 if (symbols == null || !symbols.Contains(char.ToLower(word[i])))
                 {
                     result = false;
