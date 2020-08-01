@@ -70,10 +70,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\EntryModel.cs" />
-    <Compile Include="Models\LanguageContainer.cs" />
-    <Compile Include="Models\Loader.cs" />
-    <Compile Include="Models\TextModel.cs" />
+    <Compile Include="Modules\EntryModel.cs" />
+    <Compile Include="Modules\LanguageContainer.cs" />
+    <Compile Include="Modules\Loader.cs" />
+    <Compile Include="Modules\TextModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -9,17 +9,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace TextAnalyzer.Models
+namespace TextAnalyzer.Modules
 {
     public class TextModel : INotifyPropertyChanged
     {
         public bool IsAnalyzed { get; private set; } = false;
-
         public bool IsAnalasing { get; private set; } = false;
 
         private int _readyPercent = 0;
 
         private int _symbolsAmount = 0;
+
+        private int _wordsAmount = 0;
         public int ReadyPercent
         {
             get { return _readyPercent; }
@@ -36,6 +37,16 @@ namespace TextAnalyzer.Models
             set
             {
                 _symbolsAmount = value;
+                OnChanged();
+            }
+        }
+
+        public int WordsAmount
+        {
+            get { return _wordsAmount; }
+            set
+            {
+                _wordsAmount = value;
                 OnChanged();
             }
         }
@@ -87,9 +98,10 @@ namespace TextAnalyzer.Models
                     Task t2 = Task.Run(() => FindBiggetsNum(array, i));
                     Task t3 = Task.Run(() => FindSymbols(array, i, EntryCodes.OnlyVowel));
                     Task t4 = Task.Run(() => FindSymbols(array, i, EntryCodes.OnlyConsonat));
-                    ReadyPercent = (int)Math.Round(i * onePercent);
+                    ReadyPercent = (int)(i * onePercent);
                     await Task.WhenAll(new[] { t1, t2, t3, t4 });
                     ClearCharArray(array);
+                    WordsAmount++;
                     flag = true;
                     index = 0;
                 }
@@ -98,6 +110,7 @@ namespace TextAnalyzer.Models
             _entryModels.AddRange(_longestWords);
             _entryModels.AddRange(_biggestNums);
             ColorizeEntries(main);
+            ReadyPercent = 100;
             IsAnalyzed = true;
             IsAnalasing = false;
             stopwatch.Stop();
@@ -116,7 +129,7 @@ namespace TextAnalyzer.Models
         }
         private bool IsLetterOrDigitMod(char c)
         {
-            char[] symbols = new char[] { '-', '\'', '"' };
+            char[] symbols = new char[] { '-', '\'', '"', '’' };
             return char.IsLetterOrDigit(c) || symbols.Contains(c);
         }
 
@@ -218,8 +231,8 @@ namespace TextAnalyzer.Models
                 }
                 else { break; }
             }
-            int NumTrueLength = FindTrueLength(numPart);
-            if (NumTrueLength != 0)
+            int numTrueLength = FindTrueLength(numPart);
+            if (numTrueLength != 0)
             {
                 long newNum = long.Parse(new string(numPart));
                 if (_biggestNums.Count != 0)
@@ -235,9 +248,9 @@ namespace TextAnalyzer.Models
                             _biggestNums.Add(new EntryModelNum
                             {
                                 StartIndex = endIndex - trueLength,
-                                EndIndex = endIndex - (trueLength - NumTrueLength),
+                                EndIndex = endIndex - (trueLength - numTrueLength),
                                 Num = newNum,
-                                TextColor = GetColor.GetColorByCode(EntryCodes.LongestNumber)
+                                TextColor = GetColor.GetColorByCode(EntryCodes.LargestNumber)
                             });
                             break;
                         }
@@ -248,9 +261,9 @@ namespace TextAnalyzer.Models
                     _biggestNums.Add(new EntryModelNum
                     {
                         StartIndex = endIndex - trueLength,
-                        EndIndex = endIndex - (trueLength - NumTrueLength),
+                        EndIndex = endIndex - (trueLength - numTrueLength),
                         Num = newNum,
-                        TextColor = GetColor.GetColorByCode(EntryCodes.LongestNumber)
+                        TextColor = GetColor.GetColorByCode(EntryCodes.LargestNumber)
                     });
                 }
             }
@@ -272,7 +285,7 @@ namespace TextAnalyzer.Models
 
         public int IgnoreHtmlTags(int startIndex)
         {
-            int overgoCheckIndex = 100,
+            int overgoCheckIndex = 300,
                         i = startIndex,
                         result = 0;
             char nextSymbol = _text[i];
@@ -306,6 +319,7 @@ namespace TextAnalyzer.Models
             _biggestNums.Clear();
             _entryModels.Clear();
             ReadyPercent = 0;
+            WordsAmount = 0;
             EntryModel.Offset = 0;
             _text.Clear();
             GC.Collect();

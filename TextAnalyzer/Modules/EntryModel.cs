@@ -1,35 +1,64 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
-namespace TextAnalyzer.Models
+namespace TextAnalyzer.Modules
 {
     public enum EntryCodes
     {
         LongestWord,
-        LongestNumber,
+        LargestNumber,
         OnlyConsonat,
-        OnlyVowel
+        OnlyVowel,
+    }
+
+    public class ColorInfo
+    {
+        public string Name { get; set; }
+        public string Mean { get; set; }
     }
 
     public static class GetColor
     {
-        private static Color [] textColors = new Color[]
+        public static Color[] textColors { get; } = new Color[]
         {
             Color.Gold,
             Color.Orange,
             Color.Aquamarine,
-            Color.Aqua
+            Color.Aqua,
         };
             
         public static Color GetColorByCode(EntryCodes code) 
         {
-            Color color = default;
             int integerCode = (int)code;
+            Color color;
             if (integerCode < textColors.Length)
             {
                 color = textColors[integerCode];
             }
+            else
+            {
+                throw new Exception("This Color is not defined!");
+            }
             return color;
+        }
+
+        public static EntryCodes GetCodeByColor(Color color)
+        {
+            EntryCodes code = default;
+            for (int i = 0; i < textColors.Length; i++)
+            {
+                if (color.Equals(textColors[i]))
+                {
+                    code = (EntryCodes)i;
+                    if (!Enum.IsDefined(code.GetType(), code))
+                    {
+                        throw new Exception("This Color is not defined in EntryCodes");
+                    }
+                    break;
+                }
+            }
+            return code;
         }
     }
 
