@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TextAnalyzer.Modules;
+using TextAnalyzer.Modules.Models;
+using TextAnalyzer.Modules.View;
 
 namespace TextAnalyzer
 {
@@ -43,6 +45,7 @@ namespace TextAnalyzer
             _textModel = new TextModel();
             Load_Colors();
             HideScriptErrors(MainWebBrowser, true);
+            DefaultEncodingMenu.ItemsSource = DefaultEncodings.defaultEncodings;
             _textModel.TextChanged += TextModelChanged;
             StackPan.DataContext = _textModel;
             InfoListView.DataContext = _textModel;
@@ -141,6 +144,17 @@ namespace TextAnalyzer
             {
                 MessageBox.Show("The text is currently being analyzed");
             }
+        }
+
+        private void MenuItem_Checked(object sender, RoutedEventArgs e)
+        {
+            ;
+        }
+
+        private void MenuAddEncoding_Click(object sender, RoutedEventArgs e)
+        {
+            CustomMessageBox messageBox = new CustomMessageBox();
+            messageBox.ShowDialog();
         }
     }
 }

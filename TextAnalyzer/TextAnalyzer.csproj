@@ -68,12 +68,20 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Modules\View\CustomMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Modules\EntryModel.cs" />
-    <Compile Include="Modules\LanguageContainer.cs" />
-    <Compile Include="Modules\Loader.cs" />
-    <Compile Include="Modules\TextModel.cs" />
+    <Compile Include="Modules\Models\DefaultEncodings.cs" />
+    <Compile Include="Modules\Models\EntryModel.cs" />
+    <Compile Include="Modules\Models\LanguageContainer.cs" />
+    <Compile Include="Modules\Models\Loader.cs" />
+    <Compile Include="Modules\ViewModels\TextModel.cs" />
+    <Compile Include="Modules\View\CustomMessageBox.xaml.cs">
+      <DependentUpon>CustomMessageBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
