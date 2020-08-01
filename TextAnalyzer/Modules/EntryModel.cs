@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows;
 
-namespace TextAnalyzer.Models
+namespace TextAnalyzer.Modules
 {
     public enum EntryCodes
     {

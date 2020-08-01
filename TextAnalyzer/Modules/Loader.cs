@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace TextAnalyzer.Models
+namespace TextAnalyzer.Modules
 {
     public static class Loader
     {

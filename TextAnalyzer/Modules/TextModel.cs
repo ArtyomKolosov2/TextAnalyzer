@@ -9,12 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace TextAnalyzer.Models
+namespace TextAnalyzer.Modules
 {
     public class TextModel : INotifyPropertyChanged
     {
         public bool IsAnalyzed { get; private set; } = false;
-
         public bool IsAnalasing { get; private set; } = false;
 
         private int _readyPercent = 0;
@@ -130,7 +129,7 @@ namespace TextAnalyzer.Models
         }
         private bool IsLetterOrDigitMod(char c)
         {
-            char[] symbols = new char[] { '-', '\'', '"' };
+            char[] symbols = new char[] { '-', '\'', '"', '’' };
             return char.IsLetterOrDigit(c) || symbols.Contains(c);
         }
 
