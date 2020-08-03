@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TextAnalyzer.Modules.View"
         mc:Ignorable="d"
-        Title="TextAnalazyer Beta" Height="500" Width="800" Loaded="Window_Loaded" >
+        Title="TextAnalazyer Beta" Height="550" Width="800" Loaded="Window_Loaded" >
     
     <Window.Background>
         <RadialGradientBrush>
@@ -25,6 +25,7 @@
             <Setter Property="Control.FontFamily" Value="Arial"/>
             <Setter Property="Control.FontSize" Value="15"/>
         </Style>
+        
     </Window.Resources>
     
     <Grid Style="{StaticResource MainFontSettings}">
@@ -45,14 +46,13 @@
         <Menu Grid.ColumnSpan="2" Grid.Row="0" IsMainMenu="True" x:Name="MainMenu" Height="20" Width="auto" VerticalAlignment="Top">
             <MenuItem Header="Help"></MenuItem>
             <MenuItem Header="Encoding">
-                <MenuItem Header="Choose encoding" Checked="MenuItem_Checked">
-                    <MenuItem x:Name="DefaultEncodingMenu">
-                        <MenuItem.Template >
-                            <ControlTemplate>
-                                <MenuItem  Header="{Binding Path=EncodingName}"/>
-                            </ControlTemplate>
-                        </MenuItem.Template>
-                    </MenuItem>
+                <MenuItem x:Name="ChooseEncodingMenu" Header="Choose encoding">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding Path=EncodingName}"/>
+                            <EventSetter Event="Click" Handler="MenuItem_Clicked"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <MenuItem x:Name="MenuAddEncoding" Header="Add encoding" Click="MenuAddEncoding_Click"/>
             </MenuItem>
@@ -89,6 +89,7 @@
                 </GroupBox.Header>
                 <ProgressBar x:Name="ProgressBarAnalysys" Background="White" Height="20" Minimum="0" Maximum="100" Value="{Binding Path=ReadyPercent}"/>
             </GroupBox>
+            <TextBlock x:Name="EncodingTextBlock" Margin="10" Text="{Binding StringFormat=Current I/O file encoding: {0}, Path=CurrentEncodingName}"/>
         </StackPanel>
     </Grid>
 </Window>

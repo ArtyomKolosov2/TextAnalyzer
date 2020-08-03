@@ -11,21 +11,22 @@ namespace TextAnalyzer.Modules
 {
     public class TextModel : INotifyPropertyChanged
     {
-        public bool IsAnalyzed { get; private set; } = false;
-        public bool IsAnalasing { get; private set; } = false;
-
         private int _readyPercent = 0;
 
         private int _symbolsAmount = 0;
 
         private int _wordsAmount = 0;
+
+        private string _currentEncodingName;
+
+        private Encoding _currentEncoding;
         public int ReadyPercent
         {
             get { return _readyPercent; }
             set
             {
                 _readyPercent = value;
-                OnChanged();
+                OnPropertyChangedEvent();
             }
         }
 
@@ -35,19 +36,47 @@ namespace TextAnalyzer.Modules
             set
             {
                 _symbolsAmount = value;
-                OnChanged();
+                OnPropertyChangedEvent();
             }
         }
-
         public int WordsAmount
         {
             get { return _wordsAmount; }
             set
             {
                 _wordsAmount = value;
-                OnChanged();
+                OnPropertyChangedEvent();
             }
         }
+
+        public string Text
+        {
+            get { return _text.ToString(); }
+        }
+
+        public Encoding CurrentEncoding 
+        {
+            get {return _currentEncoding; }
+            set 
+            {
+                _currentEncoding = value;
+                CurrentEncodingName = _currentEncoding.EncodingName;
+                OnPropertyChangedEvent();
+            } 
+        }
+     
+        public string CurrentEncodingName
+        {
+            get { return _currentEncodingName; }
+            set 
+            {
+                _currentEncodingName = value;
+                OnPropertyChangedEvent();
+            }
+        }
+
+        public bool IsAnalyzed { get; private set; } = false;
+        public bool IsAnalasing { get; private set; } = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -62,13 +91,12 @@ namespace TextAnalyzer.Modules
 
         private List<EntryModelNum> _biggestNums = new List<EntryModelNum>();
 
-        private void OnChanged([CallerMemberName]string propertyName = null)
+        private void OnPropertyChangedEvent([CallerMemberName]string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public StringBuilder _text = new StringBuilder();
-        public Encoding CurrentEncoding { get; set; } = Encoding.UTF8;
         public async void StartWork(MainWindow main)
         {
             bool flag = true;
@@ -319,12 +347,6 @@ namespace TextAnalyzer.Modules
             _text.Clear();
             GC.Collect();
         }
-
-        public string Text
-        {
-            get { return _text.ToString(); }
-        }
-
         private void ReplaceSpecialSymbols()
         {
             _text.Replace("\n", "<br>");

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TextAnalyzer.Modules;
-using TextAnalyzer.Modules.Models;
+using TextAnalyzer.Modules.ViewModels;
 using TextAnalyzer.Modules.View;
+using System.Text;
 
 namespace TextAnalyzer
 {
@@ -26,12 +27,12 @@ namespace TextAnalyzer
 
         public void HideScriptErrors(WebBrowser wb, bool hide)
         {
-            var browserInfo = typeof(WebBrowser).GetField("_axIWebBrowser2", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo browserInfo = typeof(WebBrowser).GetField("_axIWebBrowser2", BindingFlags.Instance | BindingFlags.NonPublic);
             if (browserInfo == null) 
             { 
                 return; 
             }
-            var objComWebBrowser = browserInfo.GetValue(wb);
+            object objComWebBrowser = browserInfo.GetValue(wb);
             if (objComWebBrowser == null)
             {
                 wb.Loaded += (o, s) => HideScriptErrors(wb, hide);
@@ -45,12 +46,11 @@ namespace TextAnalyzer
             _textModel = new TextModel();
             Load_Colors();
             HideScriptErrors(MainWebBrowser, true);
-            DefaultEncodingMenu.ItemsSource = DefaultEncodings.defaultEncodings;
+            _textModel.CurrentEncoding = Encoding.UTF8;
             _textModel.TextChanged += TextModelChanged;
+            ChooseEncodingMenu.ItemsSource = FileIOEncodings.encodingList;
             StackPan.DataContext = _textModel;
             InfoListView.DataContext = _textModel;
-            
-            
         }
 
         private void Load_Colors()
@@ -146,15 +146,27 @@ namespace TextAnalyzer
             }
         }
 
-        private void MenuItem_Checked(object sender, RoutedEventArgs e)
+        private void MenuItem_Clicked(object sender, RoutedEventArgs e)
         {
-            ;
+            object newEncoding = ((MenuItem)sender).DataContext;
+            if (newEncoding is Encoding encoding)
+            {
+                _textModel.CurrentEncoding = encoding;
+            }
         }
 
         private void MenuAddEncoding_Click(object sender, RoutedEventArgs e)
         {
             CustomMessageBox messageBox = new CustomMessageBox();
             messageBox.ShowDialog();
+            if (messageBox.DialogResult == true)
+            {
+                Encoding userEncoding = messageBox.UserEncoding;
+                if (userEncoding != null)
+                {
+                    FileIOEncodings.encodingList.Add(userEncoding);
+                }
+            }
         }
     }
 }

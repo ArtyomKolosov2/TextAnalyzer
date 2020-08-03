@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TextAnalyzer.Modules.View
 {
@@ -27,11 +17,22 @@ namespace TextAnalyzer.Modules.View
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
+            UserEncoding = GetEncoding(EncodeBox.Text);
         }
 
-        public string EncodingName 
+        private Encoding GetEncoding(string data)
         {
-            get { return EncodeBox.Text; }
+            Encoding encoding;
+            try
+            {
+                encoding = int.TryParse(data, out int encodingCodePage) ? Encoding.GetEncoding(encodingCodePage) : Encoding.GetEncoding(data);
+            }
+            catch (Exception)
+            {
+                encoding = null;
+            }
+            return encoding;
         }
+        public Encoding UserEncoding { get; private set; }
     }
 }

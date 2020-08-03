@@ -74,7 +74,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Modules\Models\DefaultEncodings.cs" />
+    <Compile Include="Modules\ViewModels\EncodingsModel.cs" />
     <Compile Include="Modules\Models\EntryModel.cs" />
     <Compile Include="Modules\Models\LanguageContainer.cs" />
     <Compile Include="Modules\Models\Loader.cs" />
