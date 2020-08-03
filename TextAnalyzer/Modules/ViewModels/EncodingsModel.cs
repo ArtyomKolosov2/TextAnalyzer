@@ -14,7 +14,7 @@ namespace TextAnalyzer.Modules.ViewModels
         {
             Encoding.UTF8,
             Encoding.Unicode,
-            Encoding.GetEncoding(1251),
+            Encoding.GetEncoding("windows-1251"),
             Encoding.GetEncoding("cp866"),
             Encoding.GetEncoding("koi8-r")
         };

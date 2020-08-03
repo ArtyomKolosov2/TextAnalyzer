@@ -114,7 +114,8 @@ namespace TextAnalyzer
             }
             else
             {
-                MessageBox.Show("The text is currently being analyzed");
+                TextMessageBox textMessage = new TextMessageBox("The text is currently being analyzed");
+                textMessage.Show();
             }  
         }
 
@@ -126,7 +127,10 @@ namespace TextAnalyzer
             }
             else
             {
-                MessageBox.Show("The text has already been analyzed");
+                string message;
+                message = (_textModel.IsAnalyzed) ? "The text has already been analyzed" : "The text is currently being analyzed";
+                TextMessageBox textMessage = new TextMessageBox(message);
+                textMessage.Show();
             }
         }
 
@@ -142,7 +146,8 @@ namespace TextAnalyzer
             }
             else
             {
-                MessageBox.Show("The text is currently being analyzed");
+                TextMessageBox textMessage = new TextMessageBox("The text is currently being analyzed");
+                textMessage.Show();
             }
         }
 

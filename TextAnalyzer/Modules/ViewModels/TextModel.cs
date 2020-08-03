@@ -51,7 +51,7 @@ namespace TextAnalyzer.Modules
 
         public string Text
         {
-            get { return _text.ToString(); }
+            get { return $"<!DOCTYPE html><html><meta http-equiv='Content-Type'content='text/html;charset={CurrentEncoding.WebName}'><head></head><body>{_text.ToString()}</body></html>"; }
         }
 
         public Encoding CurrentEncoding 
@@ -329,7 +329,7 @@ namespace TextAnalyzer.Modules
         {
             ClearData();
             int amount = FindTrueLength(value);
-            _text.Append($"<!DOCTYPE html><html><meta http-equiv='Content-Type'content='text/html;charset={CurrentEncoding.WebName}'><head></head><body>{value}</body></html>");
+            _text.Append(value);
             ReplaceSpecialSymbols();
             SymbolsAmount = amount;
             TextChanged?.Invoke(Text);

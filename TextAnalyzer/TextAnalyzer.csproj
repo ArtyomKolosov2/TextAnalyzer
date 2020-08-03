@@ -68,7 +68,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Modules\View\CustomMessageBox.xaml">
+    <Page Include="Modules\View\EncodingMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\View\TextMessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -79,8 +83,11 @@
     <Compile Include="Modules\Models\LanguageContainer.cs" />
     <Compile Include="Modules\Models\Loader.cs" />
     <Compile Include="Modules\ViewModels\TextModel.cs" />
-    <Compile Include="Modules\View\CustomMessageBox.xaml.cs">
-      <DependentUpon>CustomMessageBox.xaml</DependentUpon>
+    <Compile Include="Modules\View\EncodingMessageBox.xaml.cs">
+      <DependentUpon>EncodingMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\View\TextMessageBox.xaml.cs">
+      <DependentUpon>TextMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
