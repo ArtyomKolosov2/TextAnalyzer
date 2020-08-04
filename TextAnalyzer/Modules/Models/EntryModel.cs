@@ -23,8 +23,8 @@ namespace TextAnalyzer.Modules
         public static Color[] textColors { get; } = new Color[]
         {
             Color.Gold,
-            Color.Orange,
-            Color.Aquamarine,
+            Color.IndianRed,
+            Color.GreenYellow,
             Color.Aqua,
         };
             
@@ -62,11 +62,19 @@ namespace TextAnalyzer.Modules
         }
     }
 
-    public class SortByStartIndex : IComparer<EntryModel>
+    public class CompareByStartIndex : IComparer<EntryModel>
     {
         public int Compare(EntryModel o1, EntryModel o2)
         {
             return o1.StartIndex.CompareTo(o2.StartIndex);
+        }
+    }
+
+    public class CompareByEndIndex : IComparer<EntryModel>
+    {
+        public int Compare(EntryModel o1, EntryModel o2)
+        {
+            return o1.EndIndex.CompareTo(o2.EndIndex);
         }
     }
     public class EntryModel
@@ -75,7 +83,6 @@ namespace TextAnalyzer.Modules
         private int startIndex;
         private int endIndex;
         public Color TextColor { get; set; }
-
         public int StartIndex
         {
             get { return startIndex + Offset; }

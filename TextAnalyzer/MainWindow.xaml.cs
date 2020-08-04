@@ -9,6 +9,7 @@ using TextAnalyzer.Modules;
 using TextAnalyzer.Modules.ViewModels;
 using TextAnalyzer.Modules.View;
 using System.Text;
+using System.Drawing;
 
 namespace TextAnalyzer
 {
@@ -57,19 +58,19 @@ namespace TextAnalyzer
         {
             List<ColorInfo> colorInfos = new List<ColorInfo>(GetColor.textColors.Length);
             EntryCodes entryCodes = new EntryCodes();
-            foreach (var color in Enum.GetValues(entryCodes.GetType()))
+            foreach (var meaning in Enum.GetValues(entryCodes.GetType()))
             {
                 colorInfos.Add(new ColorInfo
                 {
-                    Mean = color.ToString(),
-                    Name = GetColor.GetColorByCode((EntryCodes)color).Name
+                    Mean = meaning.ToString(),
+                    Name = GetColor.GetColorByCode((EntryCodes)meaning).Name
                 });
             }
             ColorListView.ItemsSource = colorInfos;
         }
-        private void TextModelChanged(string newText)
+        private void TextModelChanged()
         {
-            MainWebBrowser.NavigateToString(newText);
+            Dispatcher?.Invoke(new Action(() => MainWebBrowser.NavigateToString(_textModel.Text)));
         }
 
         private bool OpenFile() 
@@ -123,7 +124,7 @@ namespace TextAnalyzer
         {
             if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
             {
-                await Task.Run(() => {_textModel.StartWork(this); });
+                await Task.Run(() => {_textModel.StartWork(); });
             }
             else
             {
