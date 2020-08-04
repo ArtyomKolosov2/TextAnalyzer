@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using TextAnalyzer.Modules.Models;
 
 namespace TextAnalyzer.Modules
 {
@@ -12,18 +13,26 @@ namespace TextAnalyzer.Modules
         OnlyVowel,
     }
 
-    public class ColorInfo
+    public class ColorInfo : IComparable<ColorInfo>
     {
         public string Name { get; set; }
         public string Mean { get; set; }
+
+        public int CompareTo(ColorInfo o1)
+        {
+            return Mean.CompareTo(o1.Mean);
+        }
+        
     }
 
     public static class GetColor
     {
+        private static CodeMeanings CodeMeanings { get; } = new CodeMeanings();
+
         public static Color[] textColors { get; } = new Color[]
         {
-            Color.Gold,
-            Color.IndianRed,
+            Color.Orange,
+            Color.CornflowerBlue,
             Color.GreenYellow,
             Color.Aqua,
         };
@@ -41,6 +50,11 @@ namespace TextAnalyzer.Modules
                 throw new Exception("This Color is not defined!");
             }
             return color;
+        }
+
+        public static string GetCodeMeaning(EntryCodes code)
+        {
+            return CodeMeanings.codeMeaning[code];
         }
 
         public static EntryCodes GetCodeByColor(Color color)

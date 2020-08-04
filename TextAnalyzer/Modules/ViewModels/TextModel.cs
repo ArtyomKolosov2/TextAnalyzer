@@ -84,6 +84,10 @@ namespace TextAnalyzer.Modules
 
         public delegate void TextChangedEventHandler();
 
+        public delegate void NewColorEventHandler(Color color, string meaning);
+
+        public event NewColorEventHandler NewColorCreated;
+
         public event TextChangedEventHandler TextChanged;
 
 
@@ -107,7 +111,7 @@ namespace TextAnalyzer.Modules
             char[] array = new char[100];
             double onePercent = 100.0 / _text.Length;
             IsAnalasing = true;
-            for (int i = 0; i < _text.Length; i++)
+            for (int i = 0; i < _text.Length || flag; i++)
             {
                 char nextSymbol = _text[i];
                 if (nextSymbol == '<')
@@ -125,20 +129,14 @@ namespace TextAnalyzer.Modules
                     bool isWordFlag = IsWord(array);
                     Task [] tasks;
                     int trueLength = FindTrueLength(array);
-                    if (isWordFlag)
-                    {
-                        tasks = new Task[] 
+                    tasks = new []
                         {
                             Task.Run(() => FindLongestWord(array, i, trueLength)),
                             Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyVowel)),
-                            Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyConsonat)) 
+                            Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyConsonat)),
+                            Task.Run(() => FindLargestNumber(array, i, trueLength)) 
                         };
-                        WordsAmount++;
-                    }
-                    else
-                    {
-                        tasks = new Task[] { Task.Run(() => FindLargestNumber(array, i, trueLength)) };
-                    }
+                    WordsAmount++;
                     ReadyPercent = (int)(i * onePercent);
                     await Task.WhenAll(tasks);
                     ClearCharArray(array);
@@ -360,8 +358,10 @@ namespace TextAnalyzer.Modules
                     int r=model.TextColor.R, 
                         g=model.TextColor.G, 
                         b=model.TextColor.B;
+                    string newMeaning= GetColor.GetCodeMeaning(GetColor.GetCodeByColor(model.TextColor));
                     foreach (var entry in entries)
                     {
+                        newMeaning += $", {GetColor.GetCodeMeaning(GetColor.GetCodeByColor(entry.TextColor))}";
                         r += entry.TextColor.R;
                         g += entry.TextColor.G;
                         b += entry.TextColor.B;
@@ -370,6 +370,7 @@ namespace TextAnalyzer.Modules
                     g %= 255;
                     b %= 255;
                     model.TextColor = Color.FromArgb(r, g, b);
+                    NewColorCreated?.Invoke(model.TextColor, newMeaning);
                     i += entries.Count;
                 }
                 newModels.Add(model);
@@ -402,6 +403,7 @@ namespace TextAnalyzer.Modules
             ClearData();
             int amount = FindTrueLength(value);
             _text.Append(value);
+            _text.Append('\0');
             ReplaceSpecialSymbols();
             SymbolsAmount = amount;
             TextChanged?.Invoke();

@@ -10,6 +10,7 @@ using TextAnalyzer.Modules.ViewModels;
 using TextAnalyzer.Modules.View;
 using System.Text;
 using System.Drawing;
+using System.Collections.ObjectModel;
 
 namespace TextAnalyzer
 {
@@ -18,7 +19,10 @@ namespace TextAnalyzer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public TextModel _textModel;
+        private TextModel _textModel;
+
+        private ObservableCollection<ColorInfo> _colorInfos;
+
         public string FilePath { get; set; }
 
         public MainWindow()
@@ -45,32 +49,51 @@ namespace TextAnalyzer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _textModel = new TextModel();
-            Load_Colors();
+            _colorInfos = Load_Colors();
             HideScriptErrors(MainWebBrowser, true);
             _textModel.CurrentEncoding = Encoding.UTF8;
             _textModel.TextChanged += TextModelChanged;
+            _textModel.NewColorCreated += NewColorCreated;
             ChooseEncodingMenu.ItemsSource = FileIOEncodings.encodingList;
+            ColorListView.ItemsSource = _colorInfos;
             StackPan.DataContext = _textModel;
             InfoListView.DataContext = _textModel;
         }
 
-        private void Load_Colors()
+        private ObservableCollection<ColorInfo> Load_Colors()
         {
-            List<ColorInfo> colorInfos = new List<ColorInfo>(GetColor.textColors.Length);
+            var result = new ObservableCollection<ColorInfo>();
             EntryCodes entryCodes = new EntryCodes();
             foreach (var meaning in Enum.GetValues(entryCodes.GetType()))
             {
-                colorInfos.Add(new ColorInfo
+                result.Add(new ColorInfo
                 {
-                    Mean = meaning.ToString(),
+                    Mean = GetColor.GetCodeMeaning((EntryCodes)meaning),
                     Name = GetColor.GetColorByCode((EntryCodes)meaning).Name
                 });
             }
-            ColorListView.ItemsSource = colorInfos;
+            return result;
         }
         private void TextModelChanged()
         {
             Dispatcher?.Invoke(new Action(() => MainWebBrowser.NavigateToString(_textModel.Text)));
+        }
+
+        private void NewColorCreated(Color newColor, string colorMeaning)
+        {
+            ColorInfo newColorInfo = new ColorInfo { Name = ColorTranslator.ToHtml(newColor), Mean = colorMeaning };
+            bool AddFlag = true;
+            foreach (var colorInfo in _colorInfos)
+            {
+                if (colorInfo.CompareTo(newColorInfo) == 0)
+                {
+                    AddFlag = false;
+                }
+            }
+            if (AddFlag)
+            {
+                Dispatcher?.Invoke(new Action(() => _colorInfos.Add(newColorInfo)));
+            }
         }
 
         private bool OpenFile() 
