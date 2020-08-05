@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TextAnalyzer.Modules;
+using TextAnalyzer.Modules.Models;
+using TextAnalyzer.Modules.ViewModels;
+using TextAnalyzer.Modules.View;
+using System.Text;
+using System.Drawing;
+using System.Collections.ObjectModel;
 
 namespace TextAnalyzer
 {
@@ -14,7 +20,10 @@ namespace TextAnalyzer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public TextModel _textModel;
+        private TextModel _textModel;
+
+        private ObservableCollection<ColorInfo> _colorInfos;
+
         public string FilePath { get; set; }
 
         public MainWindow()
@@ -24,12 +33,12 @@ namespace TextAnalyzer
 
         public void HideScriptErrors(WebBrowser wb, bool hide)
         {
-            var browserInfo = typeof(WebBrowser).GetField("_axIWebBrowser2", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo browserInfo = typeof(WebBrowser).GetField("_axIWebBrowser2", BindingFlags.Instance | BindingFlags.NonPublic);
             if (browserInfo == null) 
             { 
                 return; 
             }
-            var objComWebBrowser = browserInfo.GetValue(wb);
+            object objComWebBrowser = browserInfo.GetValue(wb);
             if (objComWebBrowser == null)
             {
                 wb.Loaded += (o, s) => HideScriptErrors(wb, hide);
@@ -41,32 +50,51 @@ namespace TextAnalyzer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _textModel = new TextModel();
-            Load_Colors();
+            _colorInfos = Load_Colors();
             HideScriptErrors(MainWebBrowser, true);
+            _textModel.CurrentEncoding = Encoding.UTF8;
             _textModel.TextChanged += TextModelChanged;
+            _textModel.NewColorCreated += NewColorCreated;
+            ChooseEncodingMenu.ItemsSource = FileIOEncodings.encodingList;
+            ColorListView.ItemsSource = _colorInfos;
             StackPan.DataContext = _textModel;
             InfoListView.DataContext = _textModel;
-            
-            
         }
 
-        private void Load_Colors()
+        private ObservableCollection<ColorInfo> Load_Colors()
         {
-            List<ColorInfo> colorInfos = new List<ColorInfo>(GetColor.textColors.Length);
+            var result = new ObservableCollection<ColorInfo>();
             EntryCodes entryCodes = new EntryCodes();
-            foreach (var color in Enum.GetValues(entryCodes.GetType()))
+            foreach (var meaning in Enum.GetValues(entryCodes.GetType()))
             {
-                colorInfos.Add(new ColorInfo
+                result.Add(new ColorInfo
                 {
-                    Mean = color.ToString(),
-                    Name = GetColor.GetColorByCode((EntryCodes)color).Name
+                    Mean = GetCode.GetCodeMeaning((EntryCodes)meaning),
+                    Name = GetColor.GetColorByCode((EntryCodes)meaning).Name
                 });
             }
-            ColorListView.ItemsSource = colorInfos;
+            return result;
         }
-        private void TextModelChanged(string newText)
+        private void TextModelChanged()
         {
-            MainWebBrowser.NavigateToString(newText);
+            Dispatcher?.Invoke(new Action(() => MainWebBrowser.NavigateToString(_textModel.Text)));
+        }
+
+        private void NewColorCreated(Color newColor, string colorMeaning)
+        {
+            ColorInfo newColorInfo = new ColorInfo { Name = ColorTranslator.ToHtml(newColor), Mean = colorMeaning };
+            bool AddFlag = true;
+            foreach (var colorInfo in _colorInfos)
+            {
+                if (colorInfo.CompareTo(newColorInfo) == 0)
+                {
+                    AddFlag = false;
+                }
+            }
+            if (AddFlag)
+            {
+                Dispatcher?.Invoke(new Action(() => _colorInfos.Add(newColorInfo)));
+            }
         }
 
         private bool OpenFile() 
@@ -99,7 +127,21 @@ namespace TextAnalyzer
             return result;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
+            {
+                await Task.Run(() => {_textModel.StartWork(); });
+            }
+            else
+            {
+                string message;
+                message = (_textModel.IsAnalyzed) ? "The text has already been analyzed" : "The text is currently being analyzed";
+                TextMessageBox textMessage = new TextMessageBox(message);
+                textMessage.Show();
+            }
+        }
+        private void StartFileLoading(object sender, RoutedEventArgs e)
         {
             if (!_textModel.IsAnalasing)
             {
@@ -111,23 +153,11 @@ namespace TextAnalyzer
             }
             else
             {
-                MessageBox.Show("Text still Analysing!");
-            }  
-        }
-
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
-            {
-                await Task.Run(() => {_textModel.StartWork(this); });
-            }
-            else
-            {
-                MessageBox.Show("Text Already Analyzed!");
+                TextMessageBox textMessage = new TextMessageBox("The text is currently being analyzed");
+                textMessage.Show();
             }
         }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void StartFileSaving(object sender, RoutedEventArgs e)
         {
             if (_textModel.IsAnalyzed && !_textModel.IsAnalasing)
             {
@@ -139,7 +169,31 @@ namespace TextAnalyzer
             }
             else
             {
-                MessageBox.Show("Text still Analysing!");
+                TextMessageBox textMessage = new TextMessageBox("The text is currently being analyzed");
+                textMessage.Show();
+            }
+        }
+
+        private void MenuItem_Clicked(object sender, RoutedEventArgs e)
+        {
+            object newEncoding = ((MenuItem)sender).DataContext;
+            if (newEncoding is Encoding encoding)
+            {
+                _textModel.CurrentEncoding = encoding;
+            }
+        }
+
+        private void MenuAddEncoding_Click(object sender, RoutedEventArgs e)
+        {
+            CustomMessageBox messageBox = new CustomMessageBox();
+            messageBox.ShowDialog();
+            if (messageBox.DialogResult == true)
+            {
+                Encoding userEncoding = messageBox.UserEncoding;
+                if (userEncoding != null)
+                {
+                    FileIOEncodings.encodingList.Add(userEncoding);
+                }
             }
         }
     }
