@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using TextAnalyzer.Modules.ViewModels;
 
 namespace TextAnalyzer.Modules
 {

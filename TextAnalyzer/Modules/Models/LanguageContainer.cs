@@ -1,4 +1,6 @@
-﻿namespace TextAnalyzer.Modules
+﻿using TextAnalyzer.Modules.Models;
+
+namespace TextAnalyzer.Modules
 {
     public static class LanguageGetter
     {

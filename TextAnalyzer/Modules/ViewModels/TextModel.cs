@@ -8,8 +8,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using TextAnalyzer.Modules.Models;
 
-namespace TextAnalyzer.Modules
+namespace TextAnalyzer.Modules.ViewModels
 {
     public class TextModel : INotifyPropertyChanged
     {
@@ -31,7 +32,6 @@ namespace TextAnalyzer.Modules
                 OnPropertyChangedEvent();
             }
         }
-
         public int SymbolsAmount
         {
             get { return _symbolsAmount; }
@@ -80,16 +80,15 @@ namespace TextAnalyzer.Modules
         public bool IsAnalyzed { get; private set; } = false;
         public bool IsAnalasing { get; private set; } = false;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public delegate void TextChangedEventHandler();
 
         public delegate void NewColorEventHandler(Color color, string meaning);
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public event NewColorEventHandler NewColorCreated;
 
         public event TextChangedEventHandler TextChanged;
-
 
         private List<EntryModel> _entryModels = new List<EntryModel>();
 
@@ -130,12 +129,12 @@ namespace TextAnalyzer.Modules
                     Task [] tasks;
                     int trueLength = FindTrueLength(array);
                     tasks = new []
-                        {
-                            Task.Run(() => FindLongestWord(array, i, trueLength)),
-                            Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyVowel)),
-                            Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyConsonat)),
-                            Task.Run(() => FindLargestNumber(array, i, trueLength)) 
-                        };
+                    {
+                        Task.Run(() => FindLongestWord(array, i, trueLength)),
+                        Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyVowel)),
+                        Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyConsonat)),
+                        Task.Run(() => FindLargestNumber(array, i, trueLength))
+                    };
                     WordsAmount++;
                     ReadyPercent = (int)(i * onePercent);
                     await Task.WhenAll(tasks);
@@ -336,14 +335,13 @@ namespace TextAnalyzer.Modules
 
         private List<EntryModel> Test()
         {
-            List<EntryModel> newModels = new List<EntryModel>();
-            List<EntryModel> entries = new List<EntryModel>();
+            List<EntryModel> newModels = new List<EntryModel>(_entryModels.Count);
+            List<EntryModel> entries = new List<EntryModel>(_entryModels.Count);
             for (int i = 0; i < _entryModels.Count; i++)
             {
                 EntryModel model = _entryModels[i];
                 for (int j = i+1; j < _entryModels.Count; j++)
                 {
-
                     if (_entryModels[i].StartIndex == _entryModels[j].StartIndex)
                     {
                         entries.Add(_entryModels[j]);
@@ -358,10 +356,10 @@ namespace TextAnalyzer.Modules
                     int r=model.TextColor.R, 
                         g=model.TextColor.G, 
                         b=model.TextColor.B;
-                    string newMeaning= GetColor.GetCodeMeaning(GetColor.GetCodeByColor(model.TextColor));
+                    string newMeaning= GetCode.GetCodeMeaning(GetCode.GetCodeByColor(model.TextColor));
                     foreach (var entry in entries)
                     {
-                        newMeaning += $", {GetColor.GetCodeMeaning(GetColor.GetCodeByColor(entry.TextColor))}";
+                        newMeaning += $", {GetCode.GetCodeMeaning(GetCode.GetCodeByColor(entry.TextColor))}";
                         r += entry.TextColor.R;
                         g += entry.TextColor.G;
                         b += entry.TextColor.B;

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TextAnalyzer.Modules;
+using TextAnalyzer.Modules.Models;
 using TextAnalyzer.Modules.ViewModels;
 using TextAnalyzer.Modules.View;
 using System.Text;
@@ -68,7 +69,7 @@ namespace TextAnalyzer
             {
                 result.Add(new ColorInfo
                 {
-                    Mean = GetColor.GetCodeMeaning((EntryCodes)meaning),
+                    Mean = GetCode.GetCodeMeaning((EntryCodes)meaning),
                     Name = GetColor.GetColorByCode((EntryCodes)meaning).Name
                 });
             }
@@ -126,23 +127,6 @@ namespace TextAnalyzer
             return result;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_textModel.IsAnalasing)
-            {
-                bool openResult = OpenFile();
-                if (openResult && FilePath != null)
-                {
-                    Loader.LoadFile(_textModel, FilePath);
-                }
-            }
-            else
-            {
-                TextMessageBox textMessage = new TextMessageBox("The text is currently being analyzed");
-                textMessage.Show();
-            }  
-        }
-
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
@@ -157,8 +141,23 @@ namespace TextAnalyzer
                 textMessage.Show();
             }
         }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void StartFileLoading(object sender, RoutedEventArgs e)
+        {
+            if (!_textModel.IsAnalasing)
+            {
+                bool openResult = OpenFile();
+                if (openResult && FilePath != null)
+                {
+                    Loader.LoadFile(_textModel, FilePath);
+                }
+            }
+            else
+            {
+                TextMessageBox textMessage = new TextMessageBox("The text is currently being analyzed");
+                textMessage.Show();
+            }
+        }
+        private void StartFileSaving(object sender, RoutedEventArgs e)
         {
             if (_textModel.IsAnalyzed && !_textModel.IsAnalasing)
             {

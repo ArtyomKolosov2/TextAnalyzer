@@ -79,6 +79,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\Models\CodeMeanings.cs" />
+    <Compile Include="Modules\Models\EntryCodes.cs" />
+    <Compile Include="Modules\Models\GetColor.cs" />
     <Compile Include="Modules\ViewModels\EncodingsModel.cs" />
     <Compile Include="Modules\Models\EntryModel.cs" />
     <Compile Include="Modules\Models\LanguageContainer.cs" />
@@ -114,6 +116,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Modules\Icons\help.png" />
+    <Resource Include="Modules\Icons\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Modules\Icons\load.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
