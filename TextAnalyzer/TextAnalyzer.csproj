@@ -118,11 +118,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Modules\Icons\help.png" />
     <Resource Include="Modules\Icons\save.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Modules\Icons\load.png" />
+    <Resource Include="Modules\Icons\load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Modules\Icons\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Modules\Icons\help.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

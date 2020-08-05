@@ -53,7 +53,7 @@ namespace TextAnalyzer
             _colorInfos = Load_Colors();
             HideScriptErrors(MainWebBrowser, true);
             _textModel.CurrentEncoding = Encoding.UTF8;
-            _textModel.TextChanged += TextModelChanged;
+            _textModel.TextChanged += GetTextFromModel;
             _textModel.NewColorCreated += NewColorCreated;
             ChooseEncodingMenu.ItemsSource = FileIOEncodings.encodingList;
             ColorListView.ItemsSource = _colorInfos;
@@ -75,7 +75,7 @@ namespace TextAnalyzer
             }
             return result;
         }
-        private void TextModelChanged()
+        private void GetTextFromModel()
         {
             Dispatcher?.Invoke(new Action(() => MainWebBrowser.NavigateToString(_textModel.Text)));
         }
@@ -140,6 +140,11 @@ namespace TextAnalyzer
                 TextMessageBox textMessage = new TextMessageBox(message);
                 textMessage.Show();
             }
+        }
+
+        private void Refresh_Text(object sender, RoutedEventArgs e)
+        {
+            GetTextFromModel();
         }
         private void StartFileLoading(object sender, RoutedEventArgs e)
         {

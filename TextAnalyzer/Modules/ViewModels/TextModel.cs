@@ -125,9 +125,9 @@ namespace TextAnalyzer.Modules.ViewModels
                 }
                 else if (flag)
                 {
-                    bool isWordFlag = IsWord(array);
                     Task [] tasks;
                     int trueLength = FindTrueLength(array);
+                    bool isWordFlag = true;
                     tasks = new []
                     {
                         Task.Run(() => FindLongestWord(array, i, trueLength)),
@@ -135,9 +135,12 @@ namespace TextAnalyzer.Modules.ViewModels
                         Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyConsonat)),
                         Task.Run(() => FindLargestNumber(array, i, trueLength))
                     };
-                    WordsAmount++;
                     ReadyPercent = (int)(i * onePercent);
                     await Task.WhenAll(tasks);
+                    if (isWordFlag)
+                    {
+                        WordsAmount++;
+                    }
                     ClearCharArray(array);
                     flag = false;
                     index = 0; 
@@ -165,10 +168,9 @@ namespace TextAnalyzer.Modules.ViewModels
             }
         }
 
-        private bool IsWord(char[] word)
+        private bool IsWord(char[] word, int trueLength)
         {
             bool result = true;
-            int trueLength = FindTrueLength(word);
             for (int i = 0; i < trueLength; i++)
             {
                 if (char.IsLetter(word[i]) == false)
@@ -278,7 +280,10 @@ namespace TextAnalyzer.Modules.ViewModels
                 {
                     numPart[i] = word[i];
                 }
-                else { break; }
+                else 
+                { 
+                    break; 
+                }
             }
             int numTrueLength = FindTrueLength(numPart);
             if (numTrueLength != 0)
@@ -321,7 +326,7 @@ namespace TextAnalyzer.Modules.ViewModels
         private void ColorizeEntries()
         {
             _entryModels.Sort(new CompareByStartIndex());
-            _entryModels = Test();
+            _entryModels = JoinSameEntries();
             foreach (var entry in _entryModels)
             {
                 string startString = $"<span style=\"background:{ColorTranslator.ToHtml(entry.TextColor)}\">",
@@ -333,7 +338,7 @@ namespace TextAnalyzer.Modules.ViewModels
             TextChanged?.Invoke();
         }
 
-        private List<EntryModel> Test()
+        private List<EntryModel> JoinSameEntries()
         {
             List<EntryModel> newModels = new List<EntryModel>(_entryModels.Count);
             List<EntryModel> entries = new List<EntryModel>(_entryModels.Count);
@@ -413,6 +418,7 @@ namespace TextAnalyzer.Modules.ViewModels
             _longestWords.Clear();
             _biggestNums.Clear();
             _entryModels.Clear();
+            _text.Clear();
             ReadyPercent = 0;
             WordsAmount = 0;
             EntryModel.Offset = 0;

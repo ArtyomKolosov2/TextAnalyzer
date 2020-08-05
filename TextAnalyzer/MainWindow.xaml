@@ -58,6 +58,12 @@
                         <Image Source="Modules/Icons/load.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <Separator/>
+                <MenuItem Header="Refresh" Click="Refresh_Text">
+                    <MenuItem.Icon>
+                        <Image Source="Modules/Icons/refresh.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Encoding">
                 <MenuItem x:Name="ChooseEncodingMenu" Header="Choose encoding">
@@ -71,7 +77,7 @@
                 <MenuItem x:Name="MenuAddEncoding" Header="Add encoding" Click="MenuAddEncoding_Click"/>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem.Icon>
+                <MenuItem.Icon >
                     <Image Source="Modules/Icons/help.png"/>
                 </MenuItem.Icon>
             </MenuItem>
