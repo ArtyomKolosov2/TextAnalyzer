@@ -12,7 +12,7 @@ To read various files, it is possible to change I/O file encoding
 standart Encoding - Unicode(UTF-8)
 Currently program supports only two languages: Russian and English
 
-## Download Link: [TextAnalyzer.exe](https://yadi.sk/d/Rj-4uvJ3L3TYmA)
+## Download Link: [TextAnalyzer.exe](https://yadi.sk/d/5Fy8jbL9Mz00iw)
 ## You need .Net Framework 4.7.2 to run this app 
 
 ### ©Created by BNTU student Artyom Kolosov
