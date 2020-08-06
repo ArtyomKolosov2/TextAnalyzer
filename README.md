@@ -10,7 +10,9 @@ and also provides other info about text.
 4. Save result as text file(.txt, .html)
 
 To read various files, it is possible to change I/O file encoding
+
 standart Encoding - Unicode(UTF-8)
+
 Currently program supports only two languages: Russian and English
 
 ## Download Link: [TextAnalyzer.exe](https://yadi.sk/d/5Fy8jbL9Mz00iw)
