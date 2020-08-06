@@ -8,6 +8,12 @@ namespace TextAnalyzer.Modules.View
     public partial class TextMessageBox : Window
     {
         public string TextMessage { get; set; }
+
+        public TextMessageBox(int width, int height, string textMessage) : this(textMessage)
+        {
+            this.Width = width;
+            this.Height = height;
+        }
         public TextMessageBox(string textMessage) : this()
         {
             TextMessage = textMessage;

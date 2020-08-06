@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -79,7 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\Models\CodeMeanings.cs" />
-    <Compile Include="Modules\Models\CompareNum.cs" />
     <Compile Include="Modules\Models\EntryCodes.cs" />
     <Compile Include="Modules\Models\GetColor.cs" />
     <Compile Include="Modules\ViewModels\EncodingsModel.cs" />
@@ -126,9 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Modules\Icons\refresh.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Modules\Icons\help.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
