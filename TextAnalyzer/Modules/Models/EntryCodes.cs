@@ -9,6 +9,7 @@ namespace TextAnalyzer.Modules.Models
         LargestNumber,
         OnlyConsonat,
         OnlyVowel,
+        LowestNumber
     }
     public static class GetCode
     {

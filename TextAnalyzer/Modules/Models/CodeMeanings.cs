@@ -12,6 +12,7 @@ namespace TextAnalyzer.Modules.Models
             codeMeaning.Add(EntryCodes.LargestNumber, "Largest number");
             codeMeaning.Add(EntryCodes.OnlyConsonat, "Only consonat symbols");
             codeMeaning.Add(EntryCodes.OnlyVowel, "Only vowel symbols");
+            codeMeaning.Add(EntryCodes.LowestNumber, "Lowest number");
         }
     }
 }

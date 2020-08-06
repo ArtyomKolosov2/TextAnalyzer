@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\Models\CodeMeanings.cs" />
+    <Compile Include="Modules\Models\CompareNum.cs" />
     <Compile Include="Modules\Models\EntryCodes.cs" />
     <Compile Include="Modules\Models\GetColor.cs" />
     <Compile Include="Modules\ViewModels\EncodingsModel.cs" />
