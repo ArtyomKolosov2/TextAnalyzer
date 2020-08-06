@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -67,11 +68,30 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Modules\View\EncodingMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\View\TextMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\EntryModel.cs" />
-    <Compile Include="Models\Loader.cs" />
-    <Compile Include="Models\TextModel.cs" />
+    <Compile Include="Modules\Models\CodeMeanings.cs" />
+    <Compile Include="Modules\Models\EntryCodes.cs" />
+    <Compile Include="Modules\Models\GetColor.cs" />
+    <Compile Include="Modules\ViewModels\EncodingsModel.cs" />
+    <Compile Include="Modules\Models\EntryModel.cs" />
+    <Compile Include="Modules\Models\LanguageContainer.cs" />
+    <Compile Include="Modules\Models\Loader.cs" />
+    <Compile Include="Modules\ViewModels\TextModel.cs" />
+    <Compile Include="Modules\View\EncodingMessageBox.xaml.cs">
+      <DependentUpon>EncodingMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\View\TextMessageBox.xaml.cs">
+      <DependentUpon>TextMessageBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -96,6 +116,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Modules\Icons\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Modules\Icons\load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Modules\Icons\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
