@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace TextAnalyzer.Modules.Models
@@ -40,8 +41,13 @@ namespace TextAnalyzer.Modules.Models
         }
     }
 
-    public class EntryModelNum : EntryModel
+    public class EntryModelNum : EntryModel , IComparable<EntryModelNum>
     {
         public long Num { get; set; }
+
+        public int CompareTo(EntryModelNum entry)
+        {
+            return Num.CompareTo(entry.Num);
+        }
     }
 }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TextAnalyzer.Modules.View"
         xmlns:local1="TextAnalyzer.Modules.Icons"
         mc:Ignorable="d"
-        Title="TextAnalazyer Beta" Height="550" Width="800" Loaded="Window_Loaded" >
+        Title="TextAnalazyer Beta" Height="600" Width="800" Loaded="Window_Loaded" >
     
     <Window.Background>
         <RadialGradientBrush>
@@ -58,6 +58,12 @@
                         <Image Source="Modules/Icons/load.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <Separator/>
+                <MenuItem Header="Refresh" Click="Refresh_Text">
+                    <MenuItem.Icon>
+                        <Image Source="Modules/Icons/refresh.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Encoding">
                 <MenuItem x:Name="ChooseEncodingMenu" Header="Choose encoding">
@@ -70,10 +76,7 @@
                 </MenuItem>
                 <MenuItem x:Name="MenuAddEncoding" Header="Add encoding" Click="MenuAddEncoding_Click"/>
             </MenuItem>
-            <MenuItem Header="Help">
-                <MenuItem.Icon>
-                    <Image Source="Modules/Icons/help.png"/>
-                </MenuItem.Icon>
+            <MenuItem Click="Show_Help" Header="Help">
             </MenuItem>
 
         </Menu>
@@ -95,11 +98,12 @@
                 <ListView x:Name="InfoListView">
                     <TextBlock Text="{Binding StringFormat= Symbols in Text - {0}, Path=SymbolsAmount}"/>
                     <TextBlock Text="{Binding StringFormat= Words in Text - {0}, Path=WordsAmount}"/>
+                    <TextBlock Text="{Binding StringFormat= Analyze time - {0}, Path=AnalyzeTimeString}"/>
                 </ListView>
             </GroupBox>
         </StackPanel>
         <StackPanel x:Name="StackPan" Orientation="Vertical" Grid.Row="3" Grid.RowSpan="3" Grid.Column="1" Margin="5, 10, 5, 5">
-            <Button Height="auto" Margin="5" Click="Button_Click_1">Analyze</Button>
+            <Button Height="auto" Margin="5" Click="Start_Analyze">Analyze</Button>
             <Button Height="auto" Margin="5" Click="StartFileLoading">Load File</Button>
             <Button Height="auto" Margin="5" Click="StartFileSaving">Save File</Button>
             <GroupBox Margin="0, 10, 0, 0" >

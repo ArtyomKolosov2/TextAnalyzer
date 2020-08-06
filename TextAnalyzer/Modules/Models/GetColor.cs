@@ -16,12 +16,14 @@ namespace TextAnalyzer.Modules.Models
 
     public static class GetColor
     {
-        public static Color[] textColors { get; } = new Color[]
+        public static Color[] textColors = new Color[]
         {
             Color.Orange,
-            Color.CornflowerBlue,
             Color.GreenYellow,
             Color.Aqua,
+            Color.DarkKhaki,
+            Color.CornflowerBlue,
+            Color.Yellow
         };
 
         public static Color GetColorByCode(EntryCodes code)

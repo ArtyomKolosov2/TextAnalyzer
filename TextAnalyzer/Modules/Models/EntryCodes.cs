@@ -6,9 +6,11 @@ namespace TextAnalyzer.Modules.Models
     public enum EntryCodes
     {
         LongestWord,
-        LargestNumber,
         OnlyConsonat,
         OnlyVowel,
+        Number, 
+        LargestNumber,
+        LowestNumber
     }
     public static class GetCode
     {

@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -118,11 +118,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Modules\Icons\help.png" />
     <Resource Include="Modules\Icons\save.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Modules\Icons\load.png" />
+    <Resource Include="Modules\Icons\load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Modules\Icons\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

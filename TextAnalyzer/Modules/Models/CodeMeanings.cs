@@ -7,11 +7,15 @@ namespace TextAnalyzer.Modules.Models
         public Dictionary<EntryCodes, string> codeMeaning { get; }
         public CodeMeanings()
         {
-            codeMeaning = new Dictionary<EntryCodes, string>();
-            codeMeaning.Add(EntryCodes.LongestWord, "Longest word");
-            codeMeaning.Add(EntryCodes.LargestNumber, "Largest number");
-            codeMeaning.Add(EntryCodes.OnlyConsonat, "Only consonat symbols");
-            codeMeaning.Add(EntryCodes.OnlyVowel, "Only vowel symbols");
+            codeMeaning = new Dictionary<EntryCodes, string>
+            {
+                { EntryCodes.LongestWord, "Longest word" },
+                { EntryCodes.OnlyConsonat, "Only consonat symbols" },
+                { EntryCodes.OnlyVowel, "Only vowel symbols" },
+                { EntryCodes.Number, "Number" },
+                { EntryCodes.LargestNumber, "Largest number" },
+                { EntryCodes.LowestNumber, "LowestNumber" }
+            };
         }
     }
 }

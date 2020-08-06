@@ -53,7 +53,7 @@ namespace TextAnalyzer
             _colorInfos = Load_Colors();
             HideScriptErrors(MainWebBrowser, true);
             _textModel.CurrentEncoding = Encoding.UTF8;
-            _textModel.TextChanged += TextModelChanged;
+            _textModel.TextChanged += GetTextFromModel;
             _textModel.NewColorCreated += NewColorCreated;
             ChooseEncodingMenu.ItemsSource = FileIOEncodings.encodingList;
             ColorListView.ItemsSource = _colorInfos;
@@ -75,7 +75,7 @@ namespace TextAnalyzer
             }
             return result;
         }
-        private void TextModelChanged()
+        private void GetTextFromModel()
         {
             Dispatcher?.Invoke(new Action(() => MainWebBrowser.NavigateToString(_textModel.Text)));
         }
@@ -127,7 +127,7 @@ namespace TextAnalyzer
             return result;
         }
 
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Start_Analyze(object sender, RoutedEventArgs e)
         {
             if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
             {
@@ -140,6 +140,31 @@ namespace TextAnalyzer
                 TextMessageBox textMessage = new TextMessageBox(message);
                 textMessage.Show();
             }
+        }
+
+        private void Refresh_Text(object sender, RoutedEventArgs e)
+        {
+            GetTextFromModel();
+        }
+
+        private void Show_Help(object sender, RoutedEventArgs e)
+        {
+            string messageText = 
+                "Welcome to the Text Analyzer!\n" +
+                "The program is designed for text analysis,\n" +
+                "it highlights the features of the text with differents colors,\n" +
+                "and also provides other info about text.\n\n"+
+                "Steps to work:\n" +
+                "1. Load text file (.txt, .html)\n"+
+                "2. Click \"Analyze\" button\n"+
+                "3. Wait for the end of the analysis\n"+
+                "4. Save result as text file(.txt, .html)\n"+
+                "To read various files, it is possible to change I/O file encoding\n"+
+                "Standart Encoding - Unicode(UTF-8)\n\n"+
+                "©Created by BNTU student Artyom Kolosov";
+            TextMessageBox messageBox = new TextMessageBox(messageText);
+            messageBox.Show();
+
         }
         private void StartFileLoading(object sender, RoutedEventArgs e)
         {

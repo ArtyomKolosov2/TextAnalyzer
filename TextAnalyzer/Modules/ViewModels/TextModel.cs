@@ -7,7 +7,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using TextAnalyzer.Modules.Models;
 
 namespace TextAnalyzer.Modules.ViewModels
@@ -21,6 +20,8 @@ namespace TextAnalyzer.Modules.ViewModels
         private int _wordsAmount = 0;
 
         private string _currentEncodingName;
+
+        private string _analyzeTime;
 
         private Encoding _currentEncoding;
         public int ReadyPercent
@@ -77,6 +78,16 @@ namespace TextAnalyzer.Modules.ViewModels
             }
         }
 
+        public string AnalyzeTimeString
+        {
+            get { return _analyzeTime ?? "0"; }
+            set
+            {
+                _analyzeTime = value;
+                OnPropertyChangedEvent();
+            }
+        }
+
         public bool IsAnalyzed { get; private set; } = false;
         public bool IsAnalasing { get; private set; } = false;
 
@@ -94,7 +105,7 @@ namespace TextAnalyzer.Modules.ViewModels
 
         private List<EntryModel> _longestWords = new List<EntryModel>();
 
-        private List<EntryModelNum> _biggestNums = new List<EntryModelNum>();
+        private List<EntryModelNum> _numbers = new List<EntryModelNum>();
 
         private void OnPropertyChangedEvent([CallerMemberName]string propertyName = null)
         {
@@ -105,9 +116,10 @@ namespace TextAnalyzer.Modules.ViewModels
         public async void StartWork()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
+
             bool flag = false;
             int index = 0;
-            char[] array = new char[100];
+            char[] newWord = new char[100];
             double onePercent = 100.0 / _text.Length;
             IsAnalasing = true;
             for (int i = 0; i < _text.Length || flag; i++)
@@ -120,38 +132,50 @@ namespace TextAnalyzer.Modules.ViewModels
                 else if (IsLetterOrDigitMod(nextSymbol))
                 {
                     flag = true;
-                    array[index] = _text[i];
+                    newWord[index] = _text[i];
                     index++;
                 }
                 else if (flag)
                 {
-                    bool isWordFlag = IsWord(array);
                     Task [] tasks;
-                    int trueLength = FindTrueLength(array);
+                    int trueLength = FindTrueLength(newWord);
+                    bool isWordFlag = IsWord(newWord, trueLength);
                     tasks = new []
                     {
-                        Task.Run(() => FindLongestWord(array, i, trueLength)),
-                        Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyVowel)),
-                        Task.Run(() => FindSymbols(array, i, trueLength, EntryCodes.OnlyConsonat)),
-                        Task.Run(() => FindLargestNumber(array, i, trueLength))
+                        Task.Run(() => FindLongestWord(newWord, i, trueLength, EntryCodes.LongestWord)),
+                        Task.Run(() => FindSymbols(newWord, i, trueLength, EntryCodes.OnlyVowel)),
+                        Task.Run(() => FindSymbols(newWord, i, trueLength, EntryCodes.OnlyConsonat)),
+                        Task.Run(() => FindNumber(newWord, i, trueLength, EntryCodes.Number))
                     };
-                    WordsAmount++;
                     ReadyPercent = (int)(i * onePercent);
                     await Task.WhenAll(tasks);
-                    ClearCharArray(array);
+                    if (isWordFlag)
+                    {
+                        WordsAmount++;
+                    }
+                    ClearCharArray(newWord);
                     flag = false;
                     index = 0; 
                 }
                 
             }
             _entryModels.AddRange(_longestWords);
-            _entryModels.AddRange(_biggestNums);
+            _entryModels.AddRange(_numbers);
+
+            EntryModelNum max = _numbers.Max();
+            EntryModelNum min = _numbers.Min();
+            max.TextColor = GetColor.GetColorByCode(EntryCodes.LargestNumber);
+            if (max.Equals(min) == false)
+            {
+                min.TextColor = GetColor.GetColorByCode(EntryCodes.LowestNumber);
+            }
+
             await Task.Run(() => ColorizeEntries());
             ReadyPercent = 100;
             IsAnalyzed = true;
             IsAnalasing = false;
             stopwatch.Stop();
-            MessageBox.Show(stopwatch.Elapsed.ToString());
+            AnalyzeTimeString = stopwatch.Elapsed.ToString();
             GC.Collect();
         }
 
@@ -165,10 +189,9 @@ namespace TextAnalyzer.Modules.ViewModels
             }
         }
 
-        private bool IsWord(char[] word)
+        private bool IsWord(char[] word, int trueLength)
         {
             bool result = true;
-            int trueLength = FindTrueLength(word);
             for (int i = 0; i < trueLength; i++)
             {
                 if (char.IsLetter(word[i]) == false)
@@ -236,7 +259,7 @@ namespace TextAnalyzer.Modules.ViewModels
             }
         }
 
-        private void FindLongestWord(char[] word, int endIndex, int trueLength)
+        private void FindLongestWord(char[] word, int endIndex, int trueLength, EntryCodes code)
         {
             if (_longestWords.Count != 0)
             {
@@ -252,7 +275,7 @@ namespace TextAnalyzer.Modules.ViewModels
                         {
                             StartIndex = endIndex - trueLength,
                             EndIndex = endIndex,
-                            TextColor = GetColor.GetColorByCode(EntryCodes.LongestWord)
+                            TextColor = GetColor.GetColorByCode(code)
                         });
                         break;
                     }
@@ -264,55 +287,57 @@ namespace TextAnalyzer.Modules.ViewModels
                 {
                     StartIndex = endIndex - trueLength,
                     EndIndex = endIndex,
-                    TextColor = GetColor.GetColorByCode(EntryCodes.LongestWord)
+                    TextColor = GetColor.GetColorByCode(code)
                 });
             }
         }
 
-        private void FindLargestNumber(char[] word, int endIndex, int trueLength)
+        private void FindNumber(char[] word, int endIndex, int trueLength, EntryCodes code)
         {
             char[] numPart = new char[trueLength];
-            for (int i = 0; i < word.Length; i++)
+            int newIndex = 0;
+            bool IsNumberFound = false;
+            for (int i = 0; i < trueLength; i++)
             {
                 if (char.IsDigit(word[i]))
                 {
-                    numPart[i] = word[i];
+                    numPart[newIndex] = word[i];
+                    IsNumberFound = true;
+                    newIndex++;
                 }
-                else { break; }
-            }
-            int numTrueLength = FindTrueLength(numPart);
-            if (numTrueLength != 0)
-            {
-                long newNum = long.Parse(new string(numPart));
-                if (_biggestNums.Count != 0)
+                else if (word[i] == '-' && newIndex == 0)
                 {
-                    for (int i = 0; i < _biggestNums.Count; i++)
-                    {
-                        if (newNum >= _biggestNums[i].Num)
-                        {
-                            if (newNum > _biggestNums[i].Num)
-                            {
-                                _biggestNums.Clear();
-                            }
-                            _biggestNums.Add(new EntryModelNum
-                            {
-                                StartIndex = endIndex - trueLength,
-                                EndIndex = endIndex - (trueLength - numTrueLength),
-                                Num = newNum,
-                                TextColor = GetColor.GetColorByCode(EntryCodes.LargestNumber)
-                            });
-                            break;
-                        }
-                    }
+                    numPart[newIndex] = word[i];
+                    newIndex++;
                 }
                 else
                 {
-                    _biggestNums.Add(new EntryModelNum
+                    break;
+                }
+            }
+            int numTrueLength = FindTrueLength(numPart);
+            if (IsNumberFound && numTrueLength != 0)
+            {
+                long newNum = long.Parse(new string(numPart));
+                if (_numbers.Count != 0)
+                {
+                    _numbers.Add(new EntryModelNum
                     {
                         StartIndex = endIndex - trueLength,
                         EndIndex = endIndex - (trueLength - numTrueLength),
                         Num = newNum,
-                        TextColor = GetColor.GetColorByCode(EntryCodes.LargestNumber)
+                        TextColor = GetColor.GetColorByCode(code)
+                    });
+                }
+                else
+                {
+                    
+                    _numbers.Add(new EntryModelNum
+                    {
+                        StartIndex = endIndex - trueLength,
+                        EndIndex = endIndex - (trueLength - numTrueLength),
+                        Num = newNum,
+                        TextColor = GetColor.GetColorByCode(code)
                     });
                 }
             }
@@ -321,7 +346,7 @@ namespace TextAnalyzer.Modules.ViewModels
         private void ColorizeEntries()
         {
             _entryModels.Sort(new CompareByStartIndex());
-            _entryModels = Test();
+            _entryModels = JoinSameEntries();
             foreach (var entry in _entryModels)
             {
                 string startString = $"<span style=\"background:{ColorTranslator.ToHtml(entry.TextColor)}\">",
@@ -333,13 +358,13 @@ namespace TextAnalyzer.Modules.ViewModels
             TextChanged?.Invoke();
         }
 
-        private List<EntryModel> Test()
+        private List<EntryModel> JoinSameEntries()
         {
             List<EntryModel> newModels = new List<EntryModel>(_entryModels.Count);
             List<EntryModel> entries = new List<EntryModel>(_entryModels.Count);
             for (int i = 0; i < _entryModels.Count; i++)
             {
-                EntryModel model = _entryModels[i];
+                EntryModel currentModel = _entryModels[i];
                 for (int j = i+1; j < _entryModels.Count; j++)
                 {
                     if (_entryModels[i].StartIndex == _entryModels[j].StartIndex)
@@ -353,10 +378,10 @@ namespace TextAnalyzer.Modules.ViewModels
                 }
                 if (entries.Count > 0)
                 {
-                    int r=model.TextColor.R, 
-                        g=model.TextColor.G, 
-                        b=model.TextColor.B;
-                    string newMeaning= GetCode.GetCodeMeaning(GetCode.GetCodeByColor(model.TextColor));
+                    int r=currentModel.TextColor.R, 
+                        g=currentModel.TextColor.G, 
+                        b=currentModel.TextColor.B;
+                    string newMeaning= GetCode.GetCodeMeaning(GetCode.GetCodeByColor(currentModel.TextColor));
                     foreach (var entry in entries)
                     {
                         newMeaning += $", {GetCode.GetCodeMeaning(GetCode.GetCodeByColor(entry.TextColor))}";
@@ -367,11 +392,11 @@ namespace TextAnalyzer.Modules.ViewModels
                     r %= 255;
                     g %= 255;
                     b %= 255;
-                    model.TextColor = Color.FromArgb(r, g, b);
-                    NewColorCreated?.Invoke(model.TextColor, newMeaning);
+                    currentModel.TextColor = Color.FromArgb(r, g, b);
+                    NewColorCreated?.Invoke(currentModel.TextColor, newMeaning);
                     i += entries.Count;
                 }
-                newModels.Add(model);
+                newModels.Add(currentModel);
                 entries.Clear();
             }
             return newModels;
@@ -411,10 +436,12 @@ namespace TextAnalyzer.Modules.ViewModels
         {
             IsAnalyzed = false;
             _longestWords.Clear();
-            _biggestNums.Clear();
+            _numbers.Clear();
             _entryModels.Clear();
+            _text.Clear();
             ReadyPercent = 0;
             WordsAmount = 0;
+            AnalyzeTimeString = null;
             EntryModel.Offset = 0;
             _text.Clear();
             GC.Collect();
