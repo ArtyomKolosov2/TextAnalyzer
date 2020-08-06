@@ -119,7 +119,7 @@ namespace TextAnalyzer.Modules.ViewModels
 
             bool flag = false;
             int index = 0;
-            char[] newWord = new char[100];
+            char[] newWord = new char[1000];
             double onePercent = 100.0 / _text.Length;
             IsAnalasing = true;
             for (int i = 0; i < _text.Length || flag; i++)
@@ -153,7 +153,7 @@ namespace TextAnalyzer.Modules.ViewModels
                     {
                         WordsAmount++;
                     }
-                    ClearCharArray(newWord);
+                    ClearCharArray(newWord, trueLength);
                     flag = false;
                     index = 0; 
                 }
@@ -179,13 +179,11 @@ namespace TextAnalyzer.Modules.ViewModels
             GC.Collect();
         }
 
-        private void ClearCharArray(char[] array)
+        private void ClearCharArray(char[] array, int trueLength)
         {
-            int index = 0;
-            while (array[index] != '\0')
+            for (int i = 0; i < trueLength; i++)
             {
-                array[index] = '\0';
-                index++;
+                array[i] = '\0';
             }
         }
 
