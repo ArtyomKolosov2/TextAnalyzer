@@ -82,7 +82,7 @@
         </Menu>
         <WebBrowser Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="10" x:Name="MainWebBrowser"/>
         <StackPanel Margin="10" Grid.Row="3" Grid.RowSpan="3" Grid.Column="0" Orientation="Vertical">
-            <GroupBox MaxHeight="100" Margin="5, -3, 5, 0" Header="Color meaning">
+            <GroupBox MaxHeight="95" Margin="5, -3, 5, 0" Header="Color meaning">
                 <ListView x:Name="ColorListView">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -94,7 +94,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </GroupBox>
-            <GroupBox Margin="5, 5, 5, 5" Header="Info">
+            <GroupBox Margin="5, 10, 5, 5" Header="Info">
                 <ListView x:Name="InfoListView">
                     <TextBlock Text="{Binding StringFormat= Symbols in Text - {0}, Path=SymbolsAmount}"/>
                     <TextBlock Text="{Binding StringFormat= Words in Text - {0}, Path=WordsAmount}"/>
