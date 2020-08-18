@@ -15,8 +15,11 @@ standart Encoding - Unicode(UTF-8)
 
 Currently program supports only two languages: Russian and English
 
-## Download Link: [TextAnalyzer.exe](https://yadi.sk/d/5Fy8jbL9Mz00iw)
-## You need .Net Framework 4.7.2 to run this app 
+## Download Links: 
+### [TextAnalyzer.exe (Only Windows)](https://yadi.sk/d/5Fy8jbL9Mz00iw)
+
+### [TextAnalyzerCore.zip](https://yadi.sk/d/p_UNzGROfzyPSg)
+## You need .Net Framework 4.7.2 or .Net Core 3.1 to run this app 
 
 ### ©Created by BNTU student Artyom Kolosov
 
