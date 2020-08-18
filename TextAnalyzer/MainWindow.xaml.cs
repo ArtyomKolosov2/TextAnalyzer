@@ -52,7 +52,7 @@ namespace TextAnalyzer
             _textModel = new TextModel();
             _colorInfos = Load_Colors();
             HideScriptErrors(MainWebBrowser, true);
-            _textModel.CurrentEncoding = Encoding.UTF8;
+            _textModel.TextEncoding = Encoding.UTF8;
             _textModel.TextChanged += GetTextFromModel;
             _textModel.NewColorCreated += NewColorCreated;
             ChooseEncodingMenu.ItemsSource = FileIOEncodings.encodingList;
@@ -173,7 +173,7 @@ namespace TextAnalyzer
                 bool openResult = OpenFile();
                 if (openResult && FilePath != null)
                 {
-                    Loader.LoadFile(_textModel, FilePath);
+                    Loader.LoadTextFile(_textModel, FilePath);
                 }
             }
             else
@@ -189,7 +189,7 @@ namespace TextAnalyzer
                 bool openResult = SaveFile();
                 if (openResult && FilePath != null)
                 {
-                    Loader.SaveFile(_textModel, FilePath);
+                    Loader.SaveTextFile(_textModel, FilePath);
                 }
             }
             else
@@ -204,7 +204,7 @@ namespace TextAnalyzer
             object newEncoding = ((MenuItem)sender).DataContext;
             if (newEncoding is Encoding encoding)
             {
-                _textModel.CurrentEncoding = encoding;
+                _textModel.TextEncoding = encoding;
             }
         }
 

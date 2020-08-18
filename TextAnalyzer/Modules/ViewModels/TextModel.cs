@@ -7,11 +7,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using TextAnalyzer.Modules.Interfaces;
 using TextAnalyzer.Modules.Models;
 
 namespace TextAnalyzer.Modules.ViewModels
 {
-    public class TextModel : INotifyPropertyChanged
+    public class TextModel : INotifyPropertyChanged, ITextContainer
     {
         private int _readyPercent = 0;
 
@@ -54,10 +55,10 @@ namespace TextAnalyzer.Modules.ViewModels
 
         public string Text
         {
-            get { return $"<!DOCTYPE html><html><meta http-equiv='Content-Type'content='text/html;charset={CurrentEncoding.WebName}'><head></head><body>{_text.ToString()}</body></html>"; }
+            get { return $"<!DOCTYPE html><html><meta http-equiv='Content-Type'content='text/html;charset={TextEncoding.WebName}'><head></head><body>{_text.ToString()}</body></html>"; }
         }
 
-        public Encoding CurrentEncoding 
+        public Encoding TextEncoding 
         {
             get {return _currentEncoding; }
             set 

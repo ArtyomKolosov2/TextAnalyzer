@@ -99,6 +99,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\Interfaces\ITextContainer.cs" />
     <Compile Include="Modules\Models\CodeMeanings.cs" />
     <Compile Include="Modules\Models\EntryCodes.cs" />
     <Compile Include="Modules\Models\GetColor.cs" />

@@ -1,17 +1,17 @@
 ﻿using System.IO;
-using TextAnalyzer.Modules.ViewModels;
+using TextAnalyzer.Modules.Interfaces;
 
 namespace TextAnalyzer.Modules
 {
     public static class Loader
     {
-        public async static void LoadFile(TextModel textModel, string path)
+        public async static void LoadTextFile(ITextContainer textModel, string path)
         {
             
             using (StreamReader streamReader = new StreamReader
                     (
                     new FileStream(path, FileMode.Open, FileAccess.Read), 
-                    textModel.CurrentEncoding
+                    textModel.TextEncoding
                     )
                 )
             {
@@ -19,12 +19,12 @@ namespace TextAnalyzer.Modules
                 textModel.SetNewText(myText);
             }
         }
-        public static async void SaveFile(TextModel textModel, string path)
+        public static async void SaveTextFile(ITextContainer textModel, string path)
         {
             using (StreamWriter streamWriter = new StreamWriter
                     (
                     new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write),
-                    textModel.CurrentEncoding
+                    textModel.TextEncoding
                     )
                 )
             {
