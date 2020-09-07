@@ -119,8 +119,9 @@ namespace TextAnalyzer.Modules.ViewModels
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             bool flag = false;
-            int index = 0;
-            char[] newWord = new char[1000];
+            int index = 0, 
+                charBufferSize = 256;
+            char[] charBuffer = new char[charBufferSize];
             double onePercent = 100.0 / _text.Length;
             IsAnalasing = true;
             for (int i = 0; i < _text.Length || flag; i++)
@@ -133,20 +134,27 @@ namespace TextAnalyzer.Modules.ViewModels
                 else if (IsLetterOrDigitMod(nextSymbol))
                 {
                     flag = true;
-                    newWord[index] = _text[i];
+                    if (index >= charBufferSize)
+                    {
+                        charBufferSize *= 2;
+                        char[] newCharBuffer = new char[charBufferSize];
+                        CopyDataToCharArray(newCharBuffer, charBuffer);
+                        charBuffer = newCharBuffer;
+                    }
+                    charBuffer[index] = _text[i];
                     index++;
                 }
                 else if (flag)
                 {
                     Task [] tasks;
-                    int trueLength = FindTrueLength(newWord);
-                    bool isWordFlag = IsWord(newWord, trueLength);
+                    int trueLength = FindTrueLength(charBuffer);
+                    bool isWordFlag = IsWord(charBuffer, trueLength);
                     tasks = new []
                     {
-                        Task.Run(() => FindLongestWord(newWord, i, trueLength, EntryCodes.LongestWord)),
-                        Task.Run(() => FindSymbols(newWord, i, trueLength, EntryCodes.OnlyVowel)),
-                        Task.Run(() => FindSymbols(newWord, i, trueLength, EntryCodes.OnlyConsonat)),
-                        Task.Run(() => FindNumber(newWord, i, trueLength, EntryCodes.Number))
+                        Task.Run(() => FindLongestWord(charBuffer, i, trueLength, EntryCodes.LongestWord)),
+                        Task.Run(() => FindSymbols(charBuffer, i, trueLength, EntryCodes.OnlyVowel)),
+                        Task.Run(() => FindSymbols(charBuffer, i, trueLength, EntryCodes.OnlyConsonat)),
+                        Task.Run(() => FindNumber(charBuffer, i, trueLength, EntryCodes.Number))
                     };
                     ReadyPercent = (int)(i * onePercent);
                     await Task.WhenAll(tasks);
@@ -154,7 +162,7 @@ namespace TextAnalyzer.Modules.ViewModels
                     {
                         WordsAmount++;
                     }
-                    ClearCharArray(newWord, trueLength);
+                    ClearCharArray(charBuffer, trueLength);
                     flag = false;
                     index = 0; 
                 }
@@ -185,6 +193,18 @@ namespace TextAnalyzer.Modules.ViewModels
             for (int i = 0; i < trueLength; i++)
             {
                 array[i] = '\0';
+            }
+        }
+
+        private void CopyDataToCharArray(char [] newArray, char[] oldArray)
+        {
+            if (oldArray.Length > newArray.Length)
+            {
+                throw new Exception("Size Error: New array must be bigger than old!");
+            }
+            for (int i = 0; i < oldArray.Length; i++)
+            {
+                newArray[i] = oldArray[i];
             }
         }
 
