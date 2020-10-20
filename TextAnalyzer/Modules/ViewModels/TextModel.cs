@@ -158,14 +158,14 @@ namespace TextAnalyzer.Modules.ViewModels
                 {
                     i += IgnoreHtmlTags(i) - 1;
                 }
-                else if (IsLetterOrDigitMod(nextSymbol))
+                else if (nextSymbol.IsLetterOrDigitMod())
                 {
                     flag = true;
                     if (index >= charBufferSize)
                     {
                         charBufferSize *= 2;
                         char[] newCharBuffer = new char[charBufferSize];
-                        CopyDataToCharArray(newCharBuffer, charBuffer);
+                        newCharBuffer.CopyDataFromCharArray(charBuffer);
                         charBuffer = newCharBuffer;
                     }
                     charBuffer[index] = _text[i];
@@ -174,8 +174,8 @@ namespace TextAnalyzer.Modules.ViewModels
                 else if (flag)
                 {
                     Task [] tasks;
-                    int trueLength = FindTrueLength(charBuffer);
-                    bool isWordFlag = IsWord(charBuffer, trueLength);
+                    int trueLength = charBuffer.FindTrueLength();
+                    bool isWordFlag = charBuffer.IsWord(trueLength);
                     tasks = new []
                     {
                         Task.Run(() => FindLongestWord(i, trueLength, EntryCodes.LongestWord)),
@@ -189,7 +189,7 @@ namespace TextAnalyzer.Modules.ViewModels
                     {
                         WordsAmount++;
                     }
-                    ClearCharArray(charBuffer, trueLength);
+                    charBuffer.ClearCharArray(trueLength);
                     flag = false;
                     index = 0; 
                 }
@@ -208,72 +208,7 @@ namespace TextAnalyzer.Modules.ViewModels
             GC.Collect();
         }
 
-        private void ClearCharArray(char[] array, int trueLength)
-        {
-            for (int i = 0; i < trueLength; i++)
-            {
-                array[i] = '\0';
-            }
-        }
-
-        private void CopyDataToCharArray(char [] newArray, char[] oldArray)
-        {
-            if (oldArray.Length > newArray.Length)
-            {
-                throw new InvalidOperationException("Size Error: New array must be bigger than old!");
-            }
-            for (int i = 0; i < oldArray.Length; i++)
-            {
-                newArray[i] = oldArray[i];
-            }
-        }
-
-        private bool IsWord(char[] word, int trueLength)
-        {
-            bool result = true;
-            for (int i = 0; i < trueLength; i++)
-            {
-                if (!char.IsLetter(word[i]))
-                {
-                    result = false;
-                    break;
-                }
-            }
-            return result;
-        }
-        private bool IsLetterOrDigitMod(char c)
-        {
-            char[] symbols = new char[] { '-', '\'', '"', '’' };
-            return char.IsLetterOrDigit(c) || symbols.Contains(c);
-        }
-
-        private int FindTrueLength(string word)
-        {
-            int result = 0;
-            for (int i = 0; i < word.Length; i++)
-            {
-                if (!char.IsControl(word[i]))
-                {
-                    result++;
-                }
-            }
-            return result;
-        }
-
-        private int FindTrueLength(char[] word)
-        {
-            int result = 0;
-            for (int i = 0; i < word.Length; i++)
-            {
-                if (word[i] == '\0')
-                {
-                    break;
-                }
-                result++;
-            }
-            return result;
-        }
-
+       
         private void FindSymbols(char[] word, int endIndex, int trueLength, EntryCodes codes)
         {
             char[] symbols;
@@ -354,7 +289,7 @@ namespace TextAnalyzer.Modules.ViewModels
                     break;
                 }
             }
-            int numTrueLength = FindTrueLength(numPart);
+            int numTrueLength = numPart.FindTrueLength();
             if (IsNumberFound && numTrueLength != 0)
             {
                 long newNum = long.Parse(new string(numPart));
@@ -449,7 +384,7 @@ namespace TextAnalyzer.Modules.ViewModels
         public void SetNewText(string text)
         {
             ClearData();
-            int amount = FindTrueLength(text);
+            int amount = text.FindTrueLength();
             _text.Append(text);
             _text.Append('\0');
             ReplaceSpecialSymbols();
