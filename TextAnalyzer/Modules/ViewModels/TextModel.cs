@@ -14,6 +14,28 @@ namespace TextAnalyzer.Modules.ViewModels
 {
     public class TextModel : INotifyPropertyChanged, ITextContainer
     {
+        private static TextModel _instance;
+        private static readonly object _syncRoot = new object();
+        private TextModel()
+        { 
+
+        }
+
+        public static TextModel GetTextModelInstance()
+        {
+            if (_instance == null)
+            {
+                lock (_syncRoot)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new TextModel();
+                    }
+                }
+            }
+            return _instance;
+        }
+
         private int _readyPercent = 0;
 
         private int _symbolsAmount = 0;
@@ -104,17 +126,22 @@ namespace TextAnalyzer.Modules.ViewModels
 
         private List<EntryModel> _entryModels = new List<EntryModel>();
 
-        private List<EntryModel> _longestWords = new List<EntryModel>();
+        private readonly List<EntryModel> _longestWords = new List<EntryModel>();
 
-        private List<EntryModelNum> _numbers = new List<EntryModelNum>();
+        private readonly List<EntryModelNum> _numbers = new List<EntryModelNum>();
 
         private void OnPropertyChangedEvent([CallerMemberName]string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public StringBuilder _text = new StringBuilder();
-        public async void StartWork()
+        private readonly StringBuilder _text = new StringBuilder();
+
+        public async Task StartWorkAsync()
+        {
+            await Task.Run(() => StartWork());
+        }
+        public async Task StartWork()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -151,7 +178,7 @@ namespace TextAnalyzer.Modules.ViewModels
                     bool isWordFlag = IsWord(charBuffer, trueLength);
                     tasks = new []
                     {
-                        Task.Run(() => FindLongestWord(charBuffer, i, trueLength, EntryCodes.LongestWord)),
+                        Task.Run(() => FindLongestWord(i, trueLength, EntryCodes.LongestWord)),
                         Task.Run(() => FindSymbols(charBuffer, i, trueLength, EntryCodes.OnlyVowel)),
                         Task.Run(() => FindSymbols(charBuffer, i, trueLength, EntryCodes.OnlyConsonat)),
                         Task.Run(() => FindNumber(charBuffer, i, trueLength, EntryCodes.Number))
@@ -171,14 +198,7 @@ namespace TextAnalyzer.Modules.ViewModels
             _entryModels.AddRange(_longestWords);
             _entryModels.AddRange(_numbers);
 
-            EntryModelNum max = _numbers.Max();
-            EntryModelNum min = _numbers.Min();
-            max.TextColor = GetColor.GetColorByCode(EntryCodes.LargestNumber);
-            if (max.Equals(min) == false)
-            {
-                min.TextColor = GetColor.GetColorByCode(EntryCodes.LowestNumber);
-            }
-
+          
             await Task.Run(() => ColorizeEntries());
             ReadyPercent = 100;
             IsAnalyzed = true;
@@ -200,7 +220,7 @@ namespace TextAnalyzer.Modules.ViewModels
         {
             if (oldArray.Length > newArray.Length)
             {
-                throw new Exception("Size Error: New array must be bigger than old!");
+                throw new InvalidOperationException("Size Error: New array must be bigger than old!");
             }
             for (int i = 0; i < oldArray.Length; i++)
             {
@@ -213,7 +233,7 @@ namespace TextAnalyzer.Modules.ViewModels
             bool result = true;
             for (int i = 0; i < trueLength; i++)
             {
-                if (char.IsLetter(word[i]) == false)
+                if (!char.IsLetter(word[i]))
                 {
                     result = false;
                     break;
@@ -278,9 +298,9 @@ namespace TextAnalyzer.Modules.ViewModels
             }
         }
 
-        private void FindLongestWord(char[] word, int endIndex, int trueLength, EntryCodes code)
+        private void FindLongestWord(int endIndex, int trueLength, EntryCodes code)
         {
-            if (_longestWords.Count != 0)
+            if (_longestWords.Count > 0)
             {
                 for (int i = 0; i < _longestWords.Count; i++)
                 {
@@ -338,27 +358,13 @@ namespace TextAnalyzer.Modules.ViewModels
             if (IsNumberFound && numTrueLength != 0)
             {
                 long newNum = long.Parse(new string(numPart));
-                if (_numbers.Count != 0)
+                _numbers.Add(new EntryModelNum
                 {
-                    _numbers.Add(new EntryModelNum
-                    {
-                        StartIndex = endIndex - trueLength,
-                        EndIndex = endIndex - (trueLength - numTrueLength),
-                        Num = newNum,
-                        TextColor = GetColor.GetColorByCode(code)
-                    });
-                }
-                else
-                {
-                    
-                    _numbers.Add(new EntryModelNum
-                    {
-                        StartIndex = endIndex - trueLength,
-                        EndIndex = endIndex - (trueLength - numTrueLength),
-                        Num = newNum,
-                        TextColor = GetColor.GetColorByCode(code)
-                    });
-                }
+                    StartIndex = endIndex - trueLength,
+                    EndIndex = endIndex - (trueLength - numTrueLength),
+                    Num = newNum,
+                    TextColor = GetColor.GetColorByCode(code)
+                });
             }
         }
 
@@ -400,10 +406,10 @@ namespace TextAnalyzer.Modules.ViewModels
                     int r=currentModel.TextColor.R, 
                         g=currentModel.TextColor.G, 
                         b=currentModel.TextColor.B;
-                    string newMeaning= GetCode.GetCodeMeaning(GetCode.GetCodeByColor(currentModel.TextColor));
+                    StringBuilder newMeaning  = new StringBuilder(GetCode.GetCodeMeaning(GetCode.GetCodeByColor(currentModel.TextColor)));
                     foreach (var entry in entries)
                     {
-                        newMeaning += $", {GetCode.GetCodeMeaning(GetCode.GetCodeByColor(entry.TextColor))}";
+                        newMeaning.Append($", {GetCode.GetCodeMeaning(GetCode.GetCodeByColor(entry.TextColor))}");
                         r += entry.TextColor.R;
                         g += entry.TextColor.G;
                         b += entry.TextColor.B;
@@ -412,7 +418,7 @@ namespace TextAnalyzer.Modules.ViewModels
                     g %= 255;
                     b %= 255;
                     currentModel.TextColor = Color.FromArgb(r, g, b);
-                    NewColorCreated?.Invoke(currentModel.TextColor, newMeaning);
+                    NewColorCreated?.Invoke(currentModel.TextColor, newMeaning.ToString());
                     i += entries.Count;
                 }
                 newModels.Add(currentModel);
@@ -440,11 +446,11 @@ namespace TextAnalyzer.Modules.ViewModels
             return result;
         }
 
-        public void SetNewText(string value)
+        public void SetNewText(string text)
         {
             ClearData();
-            int amount = FindTrueLength(value);
-            _text.Append(value);
+            int amount = FindTrueLength(text);
+            _text.Append(text);
             _text.Append('\0');
             ReplaceSpecialSymbols();
             SymbolsAmount = amount;

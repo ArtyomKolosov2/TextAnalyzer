@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace TextAnalyzer.Modules.Models
@@ -23,14 +24,14 @@ namespace TextAnalyzer.Modules.Models
         public static EntryCodes GetCodeByColor(Color color)
         {
             EntryCodes code = default;
-            for (int i = 0; i < GetColor.textColors.Length; i++)
+            for (int i = 0; i < GetColor.TextColors.Count; i++)
             {
-                if (color.Equals(GetColor.textColors[i]))
+                if (color.Equals(GetColor.TextColors[i]))
                 {
                     code = (EntryCodes)i;
                     if (!Enum.IsDefined(code.GetType(), code))
                     {
-                        throw new Exception("This Color is not defined in EntryCodes");
+                        throw new InvalidEnumArgumentException("This Color is not defined in EntryCodes");
                     }
                     break;
                 }

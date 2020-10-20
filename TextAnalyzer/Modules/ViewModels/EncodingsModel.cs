@@ -5,7 +5,7 @@ namespace TextAnalyzer.Modules.ViewModels
 {
     public static class FileIOEncodings
     {
-        public static ObservableCollection<Encoding> encodingList = new ObservableCollection<Encoding>()
+        public static ObservableCollection<Encoding> EncodingList { get; } = new ObservableCollection<Encoding>()
         {
             Encoding.UTF8,
             Encoding.Unicode,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace TextAnalyzer.Modules.Models
@@ -8,15 +9,15 @@ namespace TextAnalyzer.Modules.Models
         public string Name { get; set; }
         public string Mean { get; set; }
 
-        public int CompareTo(ColorInfo o1)
+        public int CompareTo(ColorInfo other)
         {
-            return Name.CompareTo(o1.Name);
+            return Name.CompareTo(other.Name);
         }
     }
 
     public static class GetColor
     {
-        public static Color[] textColors = new Color[]
+        public static List<Color> TextColors { get; } = new List<Color>
         {
             Color.Orange,
             Color.GreenYellow,
@@ -30,13 +31,13 @@ namespace TextAnalyzer.Modules.Models
         {
             int integerCode = (int)code;
             Color color;
-            if (integerCode < textColors.Length)
+            if (integerCode < TextColors.Count)
             {
-                color = textColors[integerCode];
+                color = TextColors[integerCode];
             }
             else
             {
-                throw new Exception("This Color is not defined!");
+                throw new InvalidOperationException("This Color is not defined!");
             }
             return color;
         }

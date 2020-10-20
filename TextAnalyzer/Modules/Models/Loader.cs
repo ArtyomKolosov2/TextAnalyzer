@@ -1,11 +1,12 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using TextAnalyzer.Modules.Interfaces;
 
 namespace TextAnalyzer.Modules
 {
     public static class Loader
     {
-        public async static void LoadTextFile(ITextContainer textModel, string path)
+        public async static Task LoadTextFile(ITextContainer textModel, string path)
         {
             
             using (StreamReader streamReader = new StreamReader
@@ -19,7 +20,7 @@ namespace TextAnalyzer.Modules
                 textModel.SetNewText(myText);
             }
         }
-        public static async void SaveTextFile(ITextContainer textModel, string path)
+        public static async Task SaveTextFile(ITextContainer textModel, string path)
         {
             using (StreamWriter streamWriter = new StreamWriter
                     (

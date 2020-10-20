@@ -6,17 +6,17 @@ namespace TextAnalyzer.Modules.Models
 {
     public class CompareByStartIndex : IComparer<EntryModel>
     {
-        public int Compare(EntryModel o1, EntryModel o2)
+        public int Compare(EntryModel x, EntryModel y)
         {
-            return o1.StartIndex.CompareTo(o2.StartIndex);
+            return x.StartIndex.CompareTo(y.StartIndex);
         }
     }
 
     public class CompareByEndIndex : IComparer<EntryModel>
     {
-        public int Compare(EntryModel o1, EntryModel o2)
+        public int Compare(EntryModel x, EntryModel y)
         {
-            return o1.EndIndex.CompareTo(o2.EndIndex);
+            return x.EndIndex.CompareTo(y.EndIndex);
         }
     }
     public class EntryModel
@@ -45,9 +45,9 @@ namespace TextAnalyzer.Modules.Models
     {
         public long Num { get; set; }
 
-        public int CompareTo(EntryModelNum entry)
+        public int CompareTo(EntryModelNum other)
         {
-            return Num.CompareTo(entry.Num);
+            return Num.CompareTo(other.Num);
         }
     }
 }

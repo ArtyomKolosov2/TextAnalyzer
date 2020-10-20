@@ -1,8 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TextAnalyzer.Modules;
@@ -12,6 +10,7 @@ using TextAnalyzer.Modules.View;
 using System.Text;
 using System.Drawing;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace TextAnalyzer
 {
@@ -49,13 +48,13 @@ namespace TextAnalyzer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _textModel = new TextModel();
+            _textModel = TextModel.GetTextModelInstance();
             _colorInfos = Load_Colors();
             HideScriptErrors(MainWebBrowser, true);
             _textModel.TextEncoding = Encoding.UTF8;
             _textModel.TextChanged += GetTextFromModel;
             _textModel.NewColorCreated += NewColorCreated;
-            ChooseEncodingMenu.ItemsSource = FileIOEncodings.encodingList;
+            ChooseEncodingMenu.ItemsSource = FileIOEncodings.EncodingList;
             ColorListView.ItemsSource = _colorInfos;
             StackPan.DataContext = _textModel;
             InfoListView.DataContext = _textModel;
@@ -131,7 +130,7 @@ namespace TextAnalyzer
         {
             if (!_textModel.IsAnalyzed && !_textModel.IsAnalasing)
             {
-                await Task.Run(() => {_textModel.StartWork(); });
+                await _textModel.StartWorkAsync();
             }
             else
             {
@@ -166,14 +165,14 @@ namespace TextAnalyzer
             messageBox.Show();
 
         }
-        private void StartFileLoading(object sender, RoutedEventArgs e)
+        private async void StartFileLoading(object sender, RoutedEventArgs e)
         {
             if (!_textModel.IsAnalasing)
             {
                 bool openResult = OpenFile();
                 if (openResult && FilePath != null)
                 {
-                    Loader.LoadTextFile(_textModel, FilePath);
+                    await Loader.LoadTextFile(_textModel, FilePath);
                 }
             }
             else
@@ -182,14 +181,14 @@ namespace TextAnalyzer
                 textMessage.Show();
             }
         }
-        private void StartFileSaving(object sender, RoutedEventArgs e)
+        private async void StartFileSaving(object sender, RoutedEventArgs e)
         {
             if (_textModel.IsAnalyzed && !_textModel.IsAnalasing)
             {
                 bool openResult = SaveFile();
                 if (openResult && FilePath != null)
                 {
-                    Loader.SaveTextFile(_textModel, FilePath);
+                    await Loader.SaveTextFile(_textModel, FilePath);
                 }
             }
             else
@@ -217,7 +216,7 @@ namespace TextAnalyzer
                 Encoding userEncoding = messageBox.UserEncoding;
                 if (userEncoding != null)
                 {
-                    FileIOEncodings.encodingList.Add(userEncoding);
+                    FileIOEncodings.EncodingList.Add(userEncoding);
                 }
             }
         }
