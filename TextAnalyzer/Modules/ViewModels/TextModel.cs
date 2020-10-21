@@ -44,7 +44,7 @@ namespace TextAnalyzer.Modules.ViewModels
 
         private string _currentEncodingName;
 
-        private string _analyzeTime;
+        private string _analyzeTimeStringRepr;
 
         private Encoding _currentEncoding;
         public int ReadyPercent
@@ -103,10 +103,10 @@ namespace TextAnalyzer.Modules.ViewModels
 
         public string AnalyzeTimeString
         {
-            get { return _analyzeTime ?? "0"; }
-            set
+            get { return _analyzeTimeStringRepr ?? "0"; }
+            private set
             {
-                _analyzeTime = value;
+                _analyzeTimeStringRepr = value;
                 OnPropertyChangedEvent();
             }
         }
@@ -164,19 +164,18 @@ namespace TextAnalyzer.Modules.ViewModels
                     if (index >= charBufferSize)
                     {
                         charBufferSize *= 2;
-                        char[] newCharBuffer = new char[charBufferSize];
-                        newCharBuffer.CopyDataFromCharArray(charBuffer);
-                        charBuffer = newCharBuffer;
+                        char[] extendedCharBuffer = new char[charBufferSize];
+                        extendedCharBuffer.CopyDataFromCharArray(charBuffer);
+                        charBuffer = extendedCharBuffer;
                     }
                     charBuffer[index] = _text[i];
                     index++;
                 }
                 else if (flag)
                 {
-                    Task [] tasks;
                     int trueLength = charBuffer.FindTrueLength();
                     bool isWordFlag = charBuffer.IsWord(trueLength);
-                    tasks = new []
+                    Task[] tasks = new []
                     {
                         Task.Run(() => FindLongestWord(i, trueLength, EntryCodes.LongestWord)),
                         Task.Run(() => FindSymbols(charBuffer, i, trueLength, EntryCodes.OnlyVowel)),
@@ -197,8 +196,6 @@ namespace TextAnalyzer.Modules.ViewModels
             }
             _entryModels.AddRange(_longestWords);
             _entryModels.AddRange(_numbers);
-
-          
             await Task.Run(() => ColorizeEntries());
             ReadyPercent = 100;
             IsAnalyzed = true;
