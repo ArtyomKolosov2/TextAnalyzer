@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Modules\Icons\load.png" />
+    <None Remove="Modules\Icons\refresh.png" />
+    <None Remove="Modules\Icons\save.png" />
+    <None Remove="TextTemplate.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Modules\Interfaces\" />
+    <Folder Include="Modules\Models\" />
+    <Folder Include="Modules\View\" />
+    <Folder Include="Modules\ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Modules\Icons\load.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Modules\Icons\refresh.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Modules\Icons\save.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="TextTemplate.ico" />
+  </ItemGroup>
+
+</Project>

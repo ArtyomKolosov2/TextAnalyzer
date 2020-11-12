@@ -1,0 +1,22 @@
+﻿<Window x:Class="TextAnalyzer.Modules.View.CustomMessageBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TextAnalyzer.Modules.View"
+        mc:Ignorable="d"
+        Title="Encoding dialog" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Type encoding name or code:"/>
+        <TextBox x:Name="EncodeBox" Margin="0, 5, 0, 5" MinWidth="200" Grid.Row="1"/>
+        <WrapPanel Margin="0, 15, 0 ,0" Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button IsDefault="True" Click="Ok_Click" Margin="2" MinWidth="60">OK</Button>
+            <Button IsCancel="True"  Margin="2" MinWidth="60">Cancel</Button>
+        </WrapPanel>
+    </Grid>
+</Window>
